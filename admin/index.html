@@ -112,7 +112,7 @@ input,select,textarea{font:inherit}
 </head>
 <body>
 <header class="topo"><div class="in">
-  <img src="../luisa/img/logo-creme.png" alt="Esmeralda Praia Hotel">
+  <img src="../img/logo-creme.png" alt="Esmeralda Praia Hotel">
   <div class="t"><small>Conexão Creators</small>Área da equipe</div>
   <div class="quem" id="quem" hidden><span id="quem-email"></span><button type="button" id="sair">Sair</button></div>
 </div></header>
@@ -204,6 +204,34 @@ input,select,textarea{font:inherit}
           </div>
           <div class="msg" id="ac-msg"></div></div>
 
+        <div class="secao"><h3>Guia do creator (textos)</h3>
+          <p class="sub" style="margin-top:-4px">O que muda de campanha pra campanha no guia. O resto (hotel, dúvidas, contato) é igual pra todo mundo.</p>
+          <div class="duas">
+            <label class="campo"><span>Como chamar</span><input type="text" id="g-nome" placeholder="ex.: Luísa"></label>
+            <label class="campo"><span>Frase de boas-vindas</span><input type="text" id="g-bemvindo" placeholder="ex.: Seja bem-vinda!"></label>
+          </div>
+          <label class="campo"><span>Refeições (como funciona o regime)</span><input type="text" id="g-regime" placeholder="ex.: Café, almoço e jantar inclusos, cardápio das 6h30 às 23h"></label>
+          <label class="campo"><span>A intenção do conteúdo</span><textarea id="g-intencao" style="min-height:80px"></textarea></label>
+          <div class="duas">
+            <label class="campo"><span>O gancho (frase)</span><input type="text" id="g-gancho"></label>
+            <label class="campo"><span>Valor liberado pra falar no vídeo</span><input type="text" id="g-preco" placeholder="vazio = a definir com a equipe"></label>
+          </div>
+          <label class="campo"><span>Sobre o gancho (explicação)</span><textarea id="g-gancho-obs" style="min-height:70px"></textarea></label>
+          <label class="campo"><span>Referências (uma por linha: título | link)</span><textarea id="g-refs" style="min-height:70px" placeholder="O formato que a gente quer | https://www.instagram.com/p/…"></textarea></label>
+          <label class="campo"><span>Entregas (uma por linha)</span><textarea id="g-entregas" style="min-height:70px"></textarea></label>
+          <div class="duas">
+            <label class="campo"><span>Prazos (frase)</span><input type="text" id="g-prazos"></label>
+            <label class="campo"><span>Perfis do collab (separados por vírgula)</span><input type="text" id="g-collab" placeholder="@perfil1, @perfil2"></label>
+          </div>
+          <label class="campo"><span>Avisos (um por linha: Título: texto)</span><textarea id="g-avisos" style="min-height:60px" placeholder="Piscinas e deck: em reforma, não podem aparecer no conteúdo."></textarea></label>
+        </div>
+
+        <div class="secao"><h3>Reiniciar como primeiro acesso</h3>
+          <p class="sub" style="margin-top:-4px">Derruba as sessões do creator e apaga o que o guia guardou no celular dele (progresso, checklist, recibo). A senha continua a mesma.</p>
+          <button class="btn perigo" type="button" id="reset-creator">Reiniciar dados do creator</button>
+          <div class="msg" id="reset-msg"></div>
+        </div>
+
         <div class="secao"><h3>Links que aparecem no guia</h3>
           <label class="campo"><span>Grupo do WhatsApp da parceria (link de convite)</span><input type="text" id="l-grupo" placeholder="https://chat.whatsapp.com/…"><small class="aj">Aparece como “Grupo da parceria no WhatsApp” na aba Contato. Vazio = não aparece.</small></label>
           <label class="campo"><span>Cardápio do Esmeralda Inclusive (URL)</span><input type="text" id="l-cardapio" placeholder="https://…pdf"><small class="aj">Link “Ver o cardápio” no bloco Chegada e estadia.</small></label></div>
@@ -279,10 +307,12 @@ function configDoEsm(r,base){
   if(!Array.isArray(cfg.anexo)||!cfg.anexo.length) cfg.anexo=ANEXO_PADRAO(r.h,r.tr);
   if(cfg.cardapio==null) cfg.cardapio="https://esmeraldapraiahotel.com.br/wp-content/uploads/2026/05/Menu-All-Inclusive-2026.pdf";
   if(cfg.grupoZap==null) cfg.grupoZap="";
+  if(!cfg.guia) cfg.guia={nome_curto:(r.n||"").split(" ")[0], bemvindo:"Seja bem-vindo(a)!", regime_obs:"", intencao:"", gancho:"", gancho_obs:"", preco_liberado:"",
+    referencias:[], entregas:r.tr?[r.tr]:[], prazos:"A gente fecha com você antes da chegada.", collab:r.h?[r.h]:[], avisos:[]};
   cfg.esm={url:r.u||"",email:r.em||"",whats:r.zp||"",formato:r.tr||"",acomp:r.ac||"",obsReserva:r.ob||"",recebido:new Date().toISOString()};
   return cfg;
 }
-function guiaDe(slug){ return location.origin+"/"+String(slug||"").split("-")[0]+"/"; }
+function guiaDe(slug){ return location.origin+"/"; }
 function tratarPendentes(){
   var r=PENDENTE.nova; PENDENTE.nova=null;
   if(r&&r.slug){
@@ -309,6 +339,12 @@ $("#esm-aplicar").addEventListener("click",function(){
   msg("#ed-msg","info","Condições atualizadas com a ficha do EsmCreators — confere e clica em Salvar.");
 });
 $("#esm-ignorar").addEventListener("click",function(){ $("#esm-recebido").hidden=true; PENDENTE.aplicar=null; });
+$("#reset-creator").addEventListener("click",function(){
+  if(!atual) return; if(!confirm("Reiniciar o guia de "+atual.creator_name+" como primeiro acesso? Ele vai precisar entrar de novo.")) return;
+  api("/rest/v1/rpc/creator_reset",{method:"POST",body:JSON.stringify({p_slug:atual.slug})}).then(function(r){ return r.json(); })
+  .then(function(j){ if(!j||!j.ok) throw new Error((j&&j.message)||"falhou"); msg("#reset-msg","ok","Reiniciado. Na próxima abertura o guia pede login e começa do zero."); return carregarCampanhas(); })
+  .catch(function(e){ msg("#reset-msg","erro","Não deu: "+e.message); });
+});
 $("#ed-copiar-guia").addEventListener("click",function(){
   if(!atual) return; var u=guiaDe(atual.slug);
   navigator.clipboard.writeText(u).then(function(){ msg("#ed-msg","ok","Link do guia copiado: "+u); });
@@ -423,6 +459,13 @@ function preencherEditor(c){
   Object.keys(ADIC).forEach(function(id){ $(id).value=ad[ADIC[id]]||""; });
   $("#r-nome").value=ct.representante||""; $("#r-cargo").value=ct.cargo||"";
   $("#l-grupo").value=cfg.grupoZap||""; $("#l-cardapio").value=cfg.cardapio||"";
+  var g=cfg.guia||{};
+  $("#g-nome").value=g.nome_curto||(c.creator_name||"").split(" ")[0]; $("#g-bemvindo").value=g.bemvindo||"";
+  $("#g-regime").value=g.regime_obs||""; $("#g-intencao").value=g.intencao||""; $("#g-gancho").value=g.gancho||""; $("#g-preco").value=g.preco_liberado||"";
+  $("#g-gancho-obs").value=g.gancho_obs||"";
+  $("#g-refs").value=(Array.isArray(g.referencias)?g.referencias:[]).map(function(r){return (r.t||"Referência")+" | "+(r.u||"")}).join("\n");
+  $("#g-entregas").value=(g.entregas||[]).join("\n"); $("#g-prazos").value=g.prazos||""; $("#g-collab").value=(g.collab||[]).join(", ");
+  $("#g-avisos").value=(g.avisos||[]).join("\n");
   var benef=Array.isArray(cfg.beneficios)&&cfg.beneficios.length?cfg.beneficios:BENEF_PADRAO.map(function(b){return [b,false]});
   $("#p-benef").innerHTML=benef.map(function(b,i){ return '<label><input type="checkbox" data-i="'+i+'"'+(b[1]?" checked":"")+'>'+esc(b[0])+'</label>'; }).join("");
   $("#p-benef").setAttribute("data-nomes",JSON.stringify(benef.map(function(b){return b[0]})));
@@ -472,6 +515,15 @@ function lerEditor(){
   cfg.adicionais={}; Object.keys(ADIC).forEach(function(id){ cfg.adicionais[ADIC[id]]=$(id).value.trim(); });
   cfg.contratante.representante=$("#r-nome").value.trim(); cfg.contratante.cargo=$("#r-cargo").value.trim();
   cfg.grupoZap=$("#l-grupo").value.trim(); cfg.cardapio=$("#l-cardapio").value.trim();
+  var linhas=function(id){ return $(id).value.split("\n").map(function(l){return l.trim()}).filter(Boolean); };
+  cfg.guia=Object.assign({},cfg.guia||{},{
+    nome_curto:$("#g-nome").value.trim(), bemvindo:$("#g-bemvindo").value.trim(), regime_obs:$("#g-regime").value.trim(),
+    intencao:$("#g-intencao").value.trim(), gancho:$("#g-gancho").value.trim(), gancho_obs:$("#g-gancho-obs").value.trim(),
+    preco_liberado:$("#g-preco").value.trim(), prazos:$("#g-prazos").value.trim(),
+    referencias:linhas("#g-refs").map(function(l){ var p=l.split("|"); return p.length>1?{t:p[0].trim(),u:p.slice(1).join("|").trim()}:{t:"Referência",u:l.trim()}; }).filter(function(r){return r.u}),
+    entregas:linhas("#g-entregas"), avisos:linhas("#g-avisos"),
+    collab:$("#g-collab").value.split(",").map(function(h){return h.trim()}).filter(Boolean)
+  });
   var nomes=JSON.parse($("#p-benef").getAttribute("data-nomes")||"[]");
   cfg.beneficios=nomes.map(function(n,i){ var cb=$('#p-benef input[data-i="'+i+'"]'); return [n, !!(cb&&cb.checked)]; });
   cfg.naoInclusos=$("#p-nao").value.split("\n").map(function(l){return l.trim()}).filter(Boolean);

@@ -1,0 +1,1294 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style></head><body>
+<title>EsmSocial Redesenhado</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+
+<style>
+/* ══════════════════════════════════════════════════════════════
+   TOKENS — o sistema corrigido.
+   6 tamanhos de fonte · 3 raios · grade de 4 · 3 pesos.
+   --text-3 corrigido para 5,0:1 (claro) e 5,3:1 (escuro).
+   ══════════════════════════════════════════════════════════════ */
+:root{
+  /* tipografia */
+  --fs-1:11px; --fs-2:12px; --fs-3:14px; --fs-4:16px; --fs-5:20px; --fs-6:28px;
+  --fs-display:40px;
+  --fw-body:400; --fw-label:600; --fw-title:700;
+
+  /* raios */
+  --r-ctl:8px; --r-card:14px; --r-pill:999px;
+
+  /* espaçamento */
+  --sp-1:8px; --sp-2:12px; --sp-3:16px; --sp-4:24px; --sp-5:32px;
+
+  /* cor — tema claro */
+  --bg:#F6F4F1; --surface:#FFFFFF; --surface-2:#F1EFEB; --sidebar:#FFFFFF;
+  --border:#E2E0DB; --border-soft:#EDEBE7;
+  --text:#1B1C1E; --text-2:#55595F; --text-3:#6B7076;
+  --accent:#8A6E45; --accent-hover:#755C39; --accent-soft:rgba(138,110,69,.10);
+  --on-accent:#FFFFFF;
+
+  /* estados — semânticos, separados do accent */
+  --st-ideia:#8C8881;   --st-rascunho:#8C8881; --st-aguardando:#B07C2E;
+  --st-ajuste:#7A5EA6;  --st-aprovado:#6D8F62; --st-agendado:#41754F;
+  --st-publicado:#54718A; --st-erro:#A94539;
+
+  --shadow-1:0 1px 2px rgba(28,26,23,.06);
+  --shadow-2:0 1px 2px rgba(28,26,23,.05), 0 16px 34px -22px rgba(28,26,23,.28);
+  --shadow-3:0 24px 60px -20px rgba(28,26,23,.36);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D0D0F; --surface:#161619; --surface-2:#1E1E22; --sidebar:#0A0A0C;
+    --border:rgba(255,255,255,.10); --border-soft:rgba(255,255,255,.06);
+    --text:#F5F5F7; --text-2:#A6A6AE; --text-3:#8A8A93;
+    --accent:#C5AC7F; --accent-hover:#D4BE97; --accent-soft:rgba(197,172,127,.14);
+    --on-accent:#161619;
+    --st-ideia:#9A968E; --st-rascunho:#9A968E; --st-aguardando:#D9A64D;
+    --st-ajuste:#A98FD1; --st-aprovado:#8FB283; --st-agendado:#6FA87C;
+    --st-publicado:#7EA0BC; --st-erro:#DE7C6D;
+    --shadow-1:0 1px 2px rgba(0,0,0,.5);
+    --shadow-2:0 1px 2px rgba(0,0,0,.5), 0 18px 40px -24px rgba(0,0,0,.85);
+    --shadow-3:0 26px 64px -18px rgba(0,0,0,.9);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D0D0F; --surface:#161619; --surface-2:#1E1E22; --sidebar:#0A0A0C;
+  --border:rgba(255,255,255,.10); --border-soft:rgba(255,255,255,.06);
+  --text:#F5F5F7; --text-2:#A6A6AE; --text-3:#8A8A93;
+  --accent:#C5AC7F; --accent-hover:#D4BE97; --accent-soft:rgba(197,172,127,.14);
+  --on-accent:#161619;
+  --st-ideia:#9A968E; --st-rascunho:#9A968E; --st-aguardando:#D9A64D;
+  --st-ajuste:#A98FD1; --st-aprovado:#8FB283; --st-agendado:#6FA87C;
+  --st-publicado:#7EA0BC; --st-erro:#DE7C6D;
+  --shadow-1:0 1px 2px rgba(0,0,0,.5);
+  --shadow-2:0 1px 2px rgba(0,0,0,.5), 0 18px 40px -24px rgba(0,0,0,.85);
+  --shadow-3:0 26px 64px -18px rgba(0,0,0,.9);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   BASE
+   ══════════════════════════════════════════════════════════════ */
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:"Plus Jakarta Sans",system-ui,-apple-system,sans-serif;
+  font-size:var(--fs-3);font-weight:var(--fw-body);line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+button,input,select{font-family:inherit;font-size:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:var(--r-pill);border:3px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ── classes reutilizáveis (a "Onda 3" já aplicada) ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);box-shadow:var(--shadow-1)}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:var(--sp-1);
+  padding:9px 14px;border:1px solid var(--border);border-radius:var(--r-ctl);
+  background:var(--surface);color:var(--text);
+  font-size:var(--fs-2);font-weight:var(--fw-label);white-space:nowrap;
+  transition:background .14s ease,border-color .14s ease;
+}
+.btn:hover{background:var(--surface-2)}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn-primary:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
+.btn-ghost{background:transparent;border-color:transparent;color:var(--text-2)}
+.btn-ghost:hover{background:var(--surface-2);color:var(--text)}
+.btn-icon{width:36px;height:36px;padding:0;flex:none}
+.btn-danger{border-color:var(--st-erro);color:var(--st-erro);background:transparent}
+.btn-danger:hover{background:var(--st-erro);color:#fff}
+.chip{
+  display:inline-flex;align-items:center;gap:6px;padding:6px 12px;
+  border:1px solid var(--border);border-radius:var(--r-pill);
+  background:var(--surface);color:var(--text-2);
+  font-size:var(--fs-2);font-weight:var(--fw-label);white-space:nowrap;
+}
+.chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.label{
+  font-size:var(--fs-1);font-weight:var(--fw-label);letter-spacing:.08em;
+  text-transform:uppercase;color:var(--text-3);
+}
+.badge{
+  display:inline-flex;align-items:center;padding:2px 8px;border-radius:var(--r-pill);
+  font-size:var(--fs-1);font-weight:var(--fw-label);line-height:1.6;
+}
+.input{
+  width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--r-ctl);
+  background:var(--surface-2);color:var(--text);font-size:var(--fs-3);outline:none;
+}
+.input:focus{border-color:var(--accent)}
+
+/* ══════════════════════════════════════════════════════════════
+   SHELL
+   ══════════════════════════════════════════════════════════════ */
+.app{display:flex;height:100vh;overflow:hidden}
+@supports(height:100dvh){.app{height:100dvh}}
+
+/* ── sidebar: 5 itens ── */
+.side{
+  width:240px;flex:none;background:var(--sidebar);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;padding:var(--sp-3) var(--sp-2);
+}
+.brand{display:flex;align-items:center;gap:var(--sp-2);padding:4px var(--sp-1) var(--sp-3)}
+.brand-mark{
+  width:34px;height:34px;flex:none;border-radius:10px;
+  background:linear-gradient(135deg,#8A6E45,#A2885C);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:var(--fs-3);font-weight:var(--fw-title);letter-spacing:-.04em;
+}
+.brand-name{font-size:var(--fs-4);font-weight:var(--fw-title);letter-spacing:-.02em;line-height:1.2}
+.brand-sub{font-size:var(--fs-1);color:var(--text-3);margin-top:1px}
+
+.nav{display:flex;flex-direction:column;gap:2px;margin-top:var(--sp-1)}
+.nav-item{
+  display:flex;align-items:center;gap:var(--sp-2);width:100%;
+  padding:10px var(--sp-2);border:none;border-radius:var(--r-ctl);
+  background:transparent;color:var(--text-2);
+  font-size:var(--fs-3);font-weight:var(--fw-label);text-align:left;
+  transition:background .14s ease,color .14s ease;
+}
+.nav-item:hover{background:var(--surface-2);color:var(--text)}
+.nav-item[aria-current="page"]{background:var(--accent);color:var(--on-accent)}
+.nav-item svg{flex:none}
+.nav-item .grow{flex:1;min-width:0}
+.nav-sub{display:flex;flex-direction:column;gap:1px;margin:2px 0 4px 28px;padding-left:var(--sp-2);border-left:1.5px solid var(--border)}
+.nav-subitem{
+  display:flex;align-items:center;gap:var(--sp-1);width:100%;
+  padding:6px 10px;border:none;border-radius:var(--r-ctl);background:transparent;
+  color:var(--text-3);font-size:var(--fs-2);font-weight:var(--fw-label);text-align:left;
+}
+.nav-subitem:hover{background:var(--surface-2);color:var(--text-2)}
+.nav-subitem[aria-current="true"]{background:var(--accent-soft);color:var(--accent)}
+.nav-count{
+  margin-left:auto;font-size:var(--fs-1);font-weight:var(--fw-label);
+  padding:1px 7px;border-radius:var(--r-pill);background:var(--st-erro);color:#fff;
+}
+.nav-item[aria-current="page"] .nav-count{background:rgba(0,0,0,.25)}
+
+.side-foot{margin-top:auto;padding-top:var(--sp-2);border-top:1px solid var(--border);display:flex;flex-direction:column;gap:2px}
+.ws{
+  display:flex;align-items:center;gap:10px;width:100%;padding:9px 10px;
+  border:1px solid var(--border);border-radius:var(--r-ctl);background:var(--surface);text-align:left;
+}
+.ws:hover{background:var(--surface-2)}
+.ws-mark{
+  width:30px;height:30px;flex:none;border-radius:var(--r-ctl);
+  background:linear-gradient(135deg,#4A7C59,#6D8F62);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:var(--fs-1);font-weight:var(--fw-title);
+}
+.ws-name{font-size:var(--fs-2);font-weight:var(--fw-label);color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ws-sub{font-size:var(--fs-1);color:var(--text-3)}
+
+/* ── main + header enxuto: 4 controles ── */
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.head{
+  height:60px;flex:none;display:flex;align-items:center;gap:var(--sp-2);
+  padding:0 var(--sp-4);border-bottom:1px solid var(--border);background:var(--surface);
+}
+.head h1{font-size:var(--fs-4);font-weight:var(--fw-title);letter-spacing:-.02em;margin:0}
+.head .spacer{flex:1}
+.kbd{
+  font-size:10px;font-weight:var(--fw-label);padding:2px 5px;border-radius:4px;
+  background:var(--surface-2);border:1px solid var(--border);color:var(--text-3);
+}
+.bell{position:relative}
+.bell-dot{
+  position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;padding:0 4px;
+  border-radius:var(--r-pill);background:var(--st-erro);border:2px solid var(--surface);
+  color:#fff;font-size:10px;font-weight:var(--fw-label);
+  display:flex;align-items:center;justify-content:center;line-height:1;
+}
+.me{display:flex;align-items:center;gap:var(--sp-1);padding:4px 5px 4px 10px;border:1px solid var(--border);border-radius:var(--r-ctl);background:var(--surface-2)}
+.me-name{font-size:var(--fs-2);font-weight:var(--fw-label);line-height:1.25}
+.me-role{font-size:var(--fs-1);color:var(--text-3);line-height:1.25}
+.me-av{
+  width:30px;height:30px;flex:none;border-radius:var(--r-ctl);
+  background:linear-gradient(135deg,#8A6E45,#A2885C);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:var(--fs-1);font-weight:var(--fw-title);
+}
+
+.content{flex:1;overflow:auto;padding:var(--sp-4)}
+.wrap{max-width:1180px;margin:0 auto}   /* ← largura máxima que faltava */
+
+/* ══════════════════════════════════════════════════════════════
+   TELA: HOJE
+   ══════════════════════════════════════════════════════════════ */
+.page-title{font-size:var(--fs-6);font-weight:var(--fw-title);letter-spacing:-.025em;margin:0}
+.page-sub{font-size:var(--fs-3);color:var(--text-2);margin:6px 0 var(--sp-4)}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--sp-2);margin-bottom:var(--sp-4)}
+.stat{padding:var(--sp-3);border-left:3px solid var(--border)}
+.stat.crit{border-left-color:var(--st-erro)}
+.stat.warn{border-left-color:var(--st-aguardando)}
+.stat.ok{border-left-color:var(--st-agendado)}
+.stat.info{border-left-color:var(--st-publicado)}
+.stat-n{font-size:var(--fs-6);font-weight:var(--fw-title);letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.stat-l{font-size:var(--fs-2);color:var(--text-2);margin-top:var(--sp-1);line-height:1.4}
+@media(max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}}
+
+.section-h{display:flex;align-items:center;gap:var(--sp-1);margin:0 0 var(--sp-2)}
+.section-h h2{font-size:var(--fs-4);font-weight:var(--fw-title);letter-spacing:-.015em;margin:0}
+
+.alerts{display:flex;flex-direction:column;gap:var(--sp-1);margin-bottom:var(--sp-4)}
+.alert{
+  display:flex;align-items:center;gap:var(--sp-2);width:100%;
+  padding:var(--sp-2) var(--sp-3);border:1px solid var(--border);
+  border-left:3px solid var(--st-erro);border-radius:var(--r-ctl);
+  background:var(--surface);text-align:left;
+}
+.alert:hover{background:var(--surface-2)}
+.alert-b{flex:1;min-width:0}
+.alert-t{font-size:var(--fs-3);font-weight:var(--fw-label);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.alert-m{font-size:var(--fs-2);color:var(--text-3);margin-top:1px}
+.alert-late{font-size:var(--fs-1);font-weight:var(--fw-label);color:var(--st-erro);white-space:nowrap;flex:none}
+
+.quick{display:flex;flex-wrap:wrap;gap:var(--sp-1)}
+
+/* ══════════════════════════════════════════════════════════════
+   TELA: CALENDÁRIO — barra de controles
+   ══════════════════════════════════════════════════════════════ */
+.cal-bar{display:flex;align-items:center;gap:var(--sp-2);flex-wrap:wrap;margin-bottom:var(--sp-3)}
+.seg{display:inline-flex;padding:3px;border:1px solid var(--border);border-radius:var(--r-ctl);background:var(--surface-2);gap:2px}
+.seg button{
+  padding:6px 14px;border:none;border-radius:6px;background:transparent;
+  color:var(--text-2);font-size:var(--fs-2);font-weight:var(--fw-label);
+}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--text);box-shadow:var(--shadow-1)}
+.month-nav{display:flex;align-items:center;gap:var(--sp-1)}
+.month-label{font-size:var(--fs-4);font-weight:var(--fw-title);letter-spacing:-.015em;min-width:150px}
+
+.seasonal{display:flex;gap:var(--sp-1);flex-wrap:wrap;margin-bottom:var(--sp-3)}
+.season{
+  display:flex;align-items:center;gap:var(--sp-1);padding:8px var(--sp-2);
+  border:1px solid var(--border);border-radius:var(--r-ctl);background:var(--surface);
+}
+.season-e{font-size:var(--fs-4);line-height:1}
+.season-t{font-size:var(--fs-2);font-weight:var(--fw-label);line-height:1.3}
+.season-d{font-size:var(--fs-1);color:var(--text-3)}
+
+.filters{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:var(--sp-3)}
+.filters .sep{width:1px;height:22px;background:var(--border);margin:0 4px}
+
+/* ── legenda de estados ── */
+.legend{display:flex;gap:var(--sp-2);flex-wrap:wrap;align-items:center;margin-bottom:var(--sp-3);font-size:var(--fs-1);color:var(--text-3)}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{width:9px;height:9px;border-radius:3px;display:block}
+
+/* ══════════════════════════════════════════════════════════════
+   VISTA: MÊS
+   ══════════════════════════════════════════════════════════════ */
+.grid-head{display:grid;grid-template-columns:repeat(7,1fr);gap:var(--sp-1);margin-bottom:6px}
+.grid-head div{font-size:var(--fs-1);font-weight:var(--fw-label);letter-spacing:.08em;color:var(--text-3);padding-left:4px}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:var(--sp-1)}
+.day{
+  min-height:118px;padding:var(--sp-1);border:1px solid var(--border);
+  border-radius:var(--r-ctl);background:var(--surface);display:flex;flex-direction:column;gap:4px;
+  transition:background .14s ease,border-color .14s ease;
+}
+.day.out{background:transparent;border-color:transparent;opacity:.45;min-height:56px}
+.day.today{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.day.drop{background:var(--accent-soft);border-color:var(--accent)}
+.day.nodrop{background:rgba(169,69,57,.08);border-color:var(--st-erro)}
+.day-n{display:flex;align-items:center;gap:5px;font-size:var(--fs-2);font-weight:var(--fw-label);color:var(--text-2)}
+.day.today .day-n{color:var(--accent)}
+.day-today-tag{font-size:9px;font-weight:var(--fw-label);letter-spacing:.06em;color:var(--on-accent);background:var(--accent);padding:1px 6px;border-radius:var(--r-pill)}
+
+/* item de post — título primeiro, thumb 24px (hierarquia invertida) */
+.pitem{
+  display:flex;align-items:center;gap:6px;width:100%;padding:5px 6px;
+  border:1px solid var(--border-soft);border-left:3px solid var(--st-rascunho);
+  border-radius:6px;background:var(--surface-2);text-align:left;cursor:grab;
+}
+.pitem:hover{background:var(--surface);box-shadow:var(--shadow-1)}
+.pitem.dragging{opacity:.4}
+.pitem-thumb{width:24px;height:24px;flex:none;border-radius:5px;background:var(--border)}
+.pitem-b{flex:1;min-width:0}
+.pitem-t{font-size:var(--fs-2);font-weight:var(--fw-label);color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.35}
+.pitem-m{font-size:10px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.pitem.late{border-left-color:var(--st-erro);background:rgba(169,69,57,.07)}
+.pitem.late .pitem-m{color:var(--st-erro);font-weight:var(--fw-label)}
+.day-more{font-size:10px;font-weight:var(--fw-label);color:var(--text-3);padding:2px 6px;background:none;border:none;text-align:left}
+
+/* ══════════════════════════════════════════════════════════════
+   VISTA: SEMANA
+   ══════════════════════════════════════════════════════════════ */
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:var(--sp-1)}
+.week .day{min-height:340px}
+
+/* ══════════════════════════════════════════════════════════════
+   VISTA: LISTA
+   ══════════════════════════════════════════════════════════════ */
+.list-group{margin-bottom:var(--sp-4)}
+.list-date{display:flex;align-items:baseline;gap:var(--sp-1);margin-bottom:var(--sp-1)}
+.list-date b{font-size:var(--fs-3);font-weight:var(--fw-title)}
+.list-date span{font-size:var(--fs-2);color:var(--text-3)}
+.list-rows{display:flex;flex-direction:column;gap:6px}
+.lrow{
+  display:flex;align-items:center;gap:var(--sp-2);width:100%;padding:var(--sp-2);
+  border:1px solid var(--border);border-left:3px solid var(--st-rascunho);
+  border-radius:var(--r-ctl);background:var(--surface);text-align:left;
+}
+.lrow:hover{background:var(--surface-2)}
+.lrow.late{border-left-color:var(--st-erro)}
+.lrow-time{font-size:var(--fs-2);font-weight:var(--fw-label);color:var(--text-3);width:44px;flex:none;font-variant-numeric:tabular-nums}
+.lrow-thumb{width:32px;height:32px;flex:none;border-radius:6px;background:var(--border)}
+.lrow-b{flex:1;min-width:0}
+.lrow-t{font-size:var(--fs-3);font-weight:var(--fw-label);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lrow-c{font-size:var(--fs-2);color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+
+/* ══════════════════════════════════════════════════════════════
+   VISTA: QUADRO
+   ══════════════════════════════════════════════════════════════ */
+.board{display:flex;gap:var(--sp-2);overflow-x:auto;padding-bottom:var(--sp-2);align-items:flex-start}
+.col{flex:1 1 0;min-width:264px;background:var(--surface-2);border-radius:var(--r-card);padding:var(--sp-2);display:flex;flex-direction:column;gap:var(--sp-1)}
+.col-h{display:flex;align-items:center;gap:var(--sp-1);padding:2px 4px var(--sp-1)}
+.col-dot{width:9px;height:9px;border-radius:3px;flex:none}
+.col-t{font-size:var(--fs-2);font-weight:var(--fw-label);color:var(--text-2)}
+.col-n{margin-left:auto;font-size:var(--fs-1);font-weight:var(--fw-label);color:var(--text-3);background:var(--surface);padding:1px 8px;border-radius:var(--r-pill)}
+.col-body{display:flex;flex-direction:column;gap:var(--sp-1);max-height:560px;overflow-y:auto}
+
+/* coluna vazia = faixa fina horizontal, não tarja vertical girada */
+.col-empty{
+  flex:none;width:100%;display:flex;align-items:center;gap:var(--sp-1);
+  padding:10px var(--sp-2);border:1px dashed var(--border);border-radius:var(--r-ctl);
+  background:transparent;color:var(--text-3);font-size:var(--fs-2);font-weight:var(--fw-label);
+}
+.empties{display:flex;flex-direction:column;gap:6px;margin-top:var(--sp-2)}
+
+.bcard{
+  border:1px solid var(--border);border-left:3px solid var(--st-rascunho);
+  border-radius:var(--r-ctl);background:var(--surface);padding:var(--sp-2);
+  display:flex;flex-direction:column;gap:6px;text-align:left;width:100%;
+}
+.bcard:hover{box-shadow:var(--shadow-2)}
+.bcard.late{border-left-color:var(--st-erro)}
+.bcard-top{display:flex;align-items:center;gap:6px;font-size:var(--fs-1);color:var(--text-3);font-variant-numeric:tabular-nums}
+.bcard-t{font-size:var(--fs-3);font-weight:var(--fw-label);line-height:1.35}
+.bcard-c{font-size:var(--fs-2);color:var(--text-2);line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.bcard-f{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:2px}
+.late-tag{display:inline-flex;align-items:center;gap:4px;font-size:var(--fs-1);font-weight:var(--fw-label);color:var(--st-erro)}
+
+/* ══════════════════════════════════════════════════════════════
+   GAVETA "SEM DATA"
+   ══════════════════════════════════════════════════════════════ */
+.drawer-tab{
+  position:fixed;right:0;top:50%;transform:translateY(-50%) rotate(180deg);
+  writing-mode:vertical-rl;padding:var(--sp-3) 10px;border:1px solid var(--border);
+  border-right:none;border-radius:var(--r-card) 0 0 var(--r-card);
+  background:var(--surface);color:var(--text-2);
+  font-size:var(--fs-2);font-weight:var(--fw-label);box-shadow:var(--shadow-2);z-index:30;
+}
+.drawer{
+  position:fixed;top:0;right:0;bottom:0;width:min(340px,88vw);z-index:60;
+  background:var(--surface);border-left:1px solid var(--border);box-shadow:var(--shadow-3);
+  display:flex;flex-direction:column;transform:translateX(100%);transition:transform .22s ease;
+}
+.drawer.open{transform:none}
+.drawer-h{display:flex;align-items:center;gap:var(--sp-1);padding:var(--sp-3);border-bottom:1px solid var(--border)}
+.drawer-b{flex:1;overflow-y:auto;padding:var(--sp-3);display:flex;flex-direction:column;gap:var(--sp-1)}
+.drawer-note{font-size:var(--fs-2);color:var(--text-3);line-height:1.5;margin:0 0 var(--sp-1)}
+
+/* ══════════════════════════════════════════════════════════════
+   MODAIS — 4 camadas nomeadas em vez de 29 z-index
+   ══════════════════════════════════════════════════════════════ */
+.scrim{position:fixed;inset:0;z-index:80;background:rgba(20,18,15,.5);opacity:0;pointer-events:none;transition:opacity .18s ease}
+.scrim.open{opacity:1;pointer-events:auto}
+.modal{
+  position:fixed;z-index:90;left:50%;top:50%;transform:translate(-50%,-48%) scale(.98);
+  width:min(560px,94vw);max-height:88vh;overflow-y:auto;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);
+  box-shadow:var(--shadow-3);opacity:0;pointer-events:none;transition:opacity .18s ease,transform .18s ease;
+}
+.modal.open{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+.modal-h{display:flex;align-items:flex-start;gap:var(--sp-2);padding:var(--sp-3) var(--sp-4);border-bottom:1px solid var(--border)}
+.modal-h h3{font-size:var(--fs-4);font-weight:var(--fw-title);letter-spacing:-.015em;margin:0}
+.modal-b{padding:var(--sp-4)}
+.modal-f{display:flex;gap:var(--sp-1);justify-content:flex-end;padding:0 var(--sp-4) var(--sp-4)}
+
+.kv{display:grid;grid-template-columns:110px 1fr;gap:10px var(--sp-2);font-size:var(--fs-3);margin-bottom:var(--sp-3)}
+.kv dt{color:var(--text-3);font-size:var(--fs-2);font-weight:var(--fw-label)}
+.kv dd{margin:0;color:var(--text)}
+.caption-box{padding:var(--sp-2);background:var(--surface-2);border-radius:var(--r-ctl);font-size:var(--fs-3);line-height:1.55;color:var(--text-2)}
+
+.warnbox{
+  display:flex;gap:var(--sp-2);padding:var(--sp-2) var(--sp-3);border-radius:var(--r-ctl);
+  background:rgba(169,69,57,.08);border:1px solid var(--st-erro);margin-bottom:var(--sp-3);
+}
+.warnbox b{color:var(--st-erro);font-weight:var(--fw-label)}
+.warnbox p{margin:4px 0 0;font-size:var(--fs-2);color:var(--text-2);line-height:1.5}
+.slot{
+  display:flex;align-items:center;gap:var(--sp-2);width:100%;padding:var(--sp-2) var(--sp-3);
+  border:1px solid var(--border);border-radius:var(--r-ctl);background:var(--surface-2);
+  text-align:left;margin-bottom:6px;
+}
+.slot[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.slot-d{font-size:var(--fs-3);font-weight:var(--fw-label)}
+.slot-s{font-size:var(--fs-2);color:var(--text-3)}
+
+/* ── toast ── */
+.toasts{position:fixed;left:50%;bottom:var(--sp-4);transform:translateX(-50%);z-index:100;display:flex;flex-direction:column;gap:var(--sp-1);align-items:center}
+.toast{
+  display:flex;align-items:center;gap:var(--sp-1);padding:10px var(--sp-3);
+  border-radius:var(--r-pill);background:var(--text);color:var(--bg);
+  font-size:var(--fs-2);font-weight:var(--fw-label);box-shadow:var(--shadow-3);
+  animation:tin .2s ease;
+}
+.toast.err{background:var(--st-erro);color:#fff}
+@keyframes tin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
+
+/* ── Creators: área da equipe do Conexão Creators embutida ── */
+.creators-frame{width:100%;height:calc(100dvh - 60px - 2*var(--sp-4));min-height:520px;border:1px solid var(--border);border-radius:var(--r-card);background:#F2F2F2;display:block}
+.creators-links{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--sp-2);margin-top:var(--sp-3)}
+.creators-links a{display:flex;flex-direction:column;gap:4px;padding:var(--sp-3);border:1px solid var(--border);border-radius:var(--r-card);background:var(--surface);text-decoration:none;color:var(--text)}
+.creators-links a:hover{box-shadow:var(--shadow-2)}
+.creators-links b{font-size:var(--fs-3)} .creators-links span{font-size:var(--fs-2);color:var(--text-3)}
+
+/* ── placeholder de área fora do escopo ── */
+.stub{padding:var(--sp-5);text-align:center;border:1px dashed var(--border);border-radius:var(--r-card)}
+.stub h2{font-size:var(--fs-5);font-weight:var(--fw-title);margin:0 0 var(--sp-1)}
+.stub p{font-size:var(--fs-3);color:var(--text-2);margin:0 auto;max-width:440px;line-height:1.6}
+
+@media(max-width:1080px){
+  .side{width:64px;padding:var(--sp-3) var(--sp-1)}
+  .brand-name,.brand-sub,.nav-item .grow,.nav-sub,.ws-name,.ws-sub,.nav-count{display:none}
+  .nav-item{justify-content:center;padding:10px}
+  .ws{justify-content:center;padding:8px}
+}
+@media(max-width:760px){
+  .content{padding:var(--sp-2)}
+  .grid-head,.grid,.week{grid-template-columns:1fr}
+  .day.out{display:none}
+  .day{min-height:auto}
+  .stats{grid-template-columns:1fr}
+  .me-name,.me-role{display:none}
+}
+</style>
+
+<div class="app">
+
+  <!-- ══════════ SIDEBAR: 5 itens ══════════ -->
+  <aside class="side">
+    <div class="brand">
+      <div class="brand-mark">es</div>
+      <div style="min-width:0">
+        <div class="brand-name">EsmSocial</div>
+        <div class="brand-sub">Planeje, aprove e publique</div>
+      </div>
+    </div>
+    <nav class="nav" id="nav"></nav>
+    <div class="side-foot">
+      <button class="ws">
+        <span class="ws-mark">EP</span>
+        <span style="flex:1;min-width:0">
+          <span class="ws-name" style="display:block">Esmeralda Praia Hotel</span>
+          <span class="ws-sub" style="display:block">Trocar empresa</span>
+        </span>
+      </button>
+      <button class="nav-item" onclick="toast('Configurações — fora do escopo do protótipo')">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 8.9 19a1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 5 8.9a1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9.5a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9v.1a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+        <span class="grow">Configurações</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ══════════ MAIN ══════════ -->
+  <div class="main">
+    <header class="head">
+      <h1 id="pageTitle">Hoje</h1>
+      <div class="spacer"></div>
+      <button class="btn btn-ghost" onclick="toast('Busca — ⌘K')" title="Buscar">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <span class="kbd">⌘K</span>
+      </button>
+      <button class="btn btn-ghost btn-icon bell" onclick="toast('3 notificações')" title="Notificações">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+        <span class="bell-dot">3</span>
+      </button>
+      <button class="btn btn-primary" onclick="toast('Novo post — fora do escopo do protótipo')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
+        Criar post
+      </button>
+      <button class="me" onclick="toast('Perfil e configurações')">
+        <span style="text-align:right">
+          <span class="me-name" style="display:block">Paulo Cid</span>
+          <span class="me-role" style="display:block">Social Media</span>
+        </span>
+        <span class="me-av">PC</span>
+      </button>
+    </header>
+
+    <div class="content"><div class="wrap" id="screen"></div></div>
+  </div>
+</div>
+
+<!-- gaveta Sem data -->
+<button class="drawer-tab" id="drawerTab" onclick="toggleDrawer()">Sem data · <span id="drawerCount">0</span></button>
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <div class="drawer-h">
+    <div style="flex:1">
+      <div style="font-size:var(--fs-4);font-weight:var(--fw-title)">Sem data</div>
+      <div style="font-size:var(--fs-2);color:var(--text-3)">Ideias e aprovados sem agenda</div>
+    </div>
+    <button class="btn btn-ghost btn-icon" onclick="toggleDrawer()" aria-label="Fechar">✕</button>
+  </div>
+  <div class="drawer-b">
+    <p class="drawer-note">Arraste um cartão para um dia do calendário para agendar.</p>
+    <div id="drawerList" style="display:flex;flex-direction:column;gap:8px"></div>
+  </div>
+</aside>
+
+<div class="scrim" id="scrim" onclick="closeModal()"></div>
+<div class="modal" id="modal" role="dialog" aria-modal="true"></div>
+<div class="toasts" id="toasts"></div>
+
+<script>
+/* ══════════════════════════════════════════════════════════════
+   DADOS — extraídos das capturas de tela reais do EsmSocial.
+   Os 11 aguardando, os 3 rascunhos de julho e os 12 de agosto.
+   ══════════════════════════════════════════════════════════════ */
+const HOJE = new Date(2026, 7, 24);          // 24/08/2026
+const GRADE = ['09:00','12:00','18:00'];      // grade de slots, seg–sex
+
+const ST = {
+  ideia:      {label:'Ideia',      cor:'var(--st-ideia)'},
+  rascunho:   {label:'Rascunho',   cor:'var(--st-rascunho)'},
+  aguardando: {label:'Aguardando', cor:'var(--st-aguardando)'},
+  ajuste:     {label:'Em ajuste',  cor:'var(--st-ajuste)'},
+  aprovado:   {label:'Aprovado',   cor:'var(--st-aprovado)'},
+  agendado:   {label:'Agendado',   cor:'var(--st-agendado)'},
+  publicado:  {label:'Publicado',  cor:'var(--st-publicado)'},
+  erro:       {label:'Falhou',     cor:'var(--st-erro)'}
+};
+const ORDEM_QUADRO = ['ideia','rascunho','aguardando','ajuste','aprovado','agendado','publicado'];
+
+const G = [ // gradientes de miniatura (o app real usa a capa da mídia)
+  'linear-gradient(135deg,#7FA8C4,#B8CBD6)','linear-gradient(135deg,#C9A227,#E0C77A)',
+  'linear-gradient(135deg,#4A7C59,#8FB283)','linear-gradient(135deg,#B4726A,#D9A89F)',
+  'linear-gradient(135deg,#5E7A8F,#9BB2C2)','linear-gradient(135deg,#8A6E45,#C5AC7F)'
+];
+
+let SEQ = 0;
+function p(data, hora, titulo, status, canais, caption, thumb){
+  return {id:'p'+(++SEQ), data, hora, titulo, status, canais, caption:caption||'', thumb:thumb||G[SEQ%6]};
+}
+
+let POSTS = [
+  /* ── 3 rascunhos parados desde julho ── */
+  p('2026-07-28','15:00','Trend do Pulo','rascunho',['instagram','tiktok','youtube'],'E você? Já tá preparado para pular nas férias dos sonhos? 🌿'),
+  p('2026-07-29','10:00','Carrossel de Vídeo – Academia','rascunho',['instagram'],'Tá com data marcada para vir pra cá e não quer sair da rotina? Então já salva essas dicas'),
+  p('2026-07-30','15:00','Trend – Garfo','rascunho',['instagram'],'Um prato desses tem um risco: deixar você mal-acostumado. 😋 #Alacarte'),
+
+  /* ── 11 aguardando aprovação, TODOS com data vencida ── */
+  p('2026-08-11','12:00','Vídeo – Onde ficar em Natal','aguardando',['tiktok','youtube'],'O guia rápido de onde ficar em Natal — e por que a orla muda tudo.'),
+  p('2026-08-11','19:00','Reels – Nada urgente','aguardando',['instagram'],'E aí você percebe que tudo o que precisava era de alguns dias assim. ✨'),
+  p('2026-08-12','12:00','Carrossel – Suítes vista mar','aguardando',['instagram'],'Cinco ângulos da mesma vista. Escolhe o seu.'),
+  p('2026-08-13','12:00','Reels – A agenda dela','aguardando',['instagram'],'Enquanto você relaxa, elas já estão na próxima brincadeira. 😍'),
+  p('2026-08-14','19:00','Reels – Café da manhã em 15s','aguardando',['instagram','tiktok'],'Quinze segundos que explicam por que ninguém pula o café aqui.'),
+  p('2026-08-17','12:00','Story – Bastidores da cozinha','aguardando',['stories'],'Sequência de 4 stories: mise en place, forno, prato montado, salão.'),
+  p('2026-08-18','19:00','Reels – Do hotel até a areia','aguardando',['instagram','tiktok','youtube'],'Sessenta passos. Foi o que contamos da recepção até a areia.'),
+  p('2026-08-19','18:00','Post – Promoção de setembro','aguardando',['instagram','facebook'],'Setembro com diária a partir de… e café da manhã incluso.'),
+  p('2026-08-20','12:00','Reels – O que beber?','aguardando',['instagram'],'Perguntei ao chef o que pedir em cada ambiente do hotel… e agora ficou difícil escolher só um'),
+  p('2026-08-21','17:28','Reels – Fim de tarde na piscina','aguardando',['instagram'],'A hora em que a piscina fica dourada. Todo dia, sem exceção.'),
+  p('2026-08-22','12:00','Reels – Pôr do sol da varanda','aguardando',['instagram','tiktok','youtube'],'Mesma varanda, sol diferente. Qual você levaria?'),
+
+  /* ── 12 posts que já estão no calendário de agosto ── */
+  p('2026-08-03','12:02','Manhã em Natal','publicado',['instagram'],'Bom dia de quem acorda com esse som.'),
+  p('2026-08-04','19:00','Reels – 5 coisas que eu não fiz essa semana','publicado',['instagram','tiktok','youtube'],'Cinco coisas que eu não fiz essa semana — e não fez falta nenhuma.'),
+  p('2026-08-05','13:17','Drink/Bartender','publicado',['instagram'],'O drink da casa tem nome, mas ninguém lembra. Todo mundo pede "aquele".'),
+  p('2026-08-07','15:40','Hóspedes chegando','publicado',['instagram'],'A cara de quem acabou de chegar.'),
+  p('2026-08-09','12:00','Reels resumo dia dos pais','publicado',['instagram'],'O dia deles, do jeito deles.'),
+  p('2026-08-09','12:00','Foto pai e filho (Dia dos Pais)','publicado',['instagram'],'Feliz dia dos pais. 👨‍👦'),
+  p('2026-08-10','15:22','Piscina/Hotel fundo','publicado',['instagram'],'A piscina, e o hotel inteiro atrás dela.'),
+  p('2026-08-12','16:05','Morro do Careca / Janela quarto','publicado',['instagram'],'O Morro do Careca emoldurado pela janela do quarto.'),
+  p('2026-08-14','17:27','Buggy Genipabu','publicado',['instagram'],'Com emoção ou sem emoção? A resposta certa é com.'),
+  p('2026-08-17','12:52','Família caminhando praia','publicado',['instagram'],'O trecho de praia que fica na frente do hotel.'),
+  p('2026-08-19','12:00','A la carte','publicado',['instagram'],'Jantar à la carte, com a orla ali do lado.'),
+  p('2026-08-24','13:18','Vista para o Mar','publicado',['instagram'],'A vista que abre o dia.'),
+  p('2026-08-26','12:00','Café da manhã','agendado',['instagram'],'O café que começa às 6h30 e vai até tarde.'),
+
+  /* ── sem data: ideias e um aprovado sem agenda ── */
+  p(null,null,'Tour 360º do lobby','ideia',['instagram'],'Gravar em horário de luz baixa, com o lobby vazio.'),
+  p(null,null,'Depoimento de hóspede','ideia',['instagram','youtube'],'Pedir autorização na saída. Formato vertical, 30s.'),
+  p(null,null,'Parceria com buggy de Genipabu','ideia',['instagram','tiktok'],'Combinar contrapartida antes de gravar.')
+];
+
+const SAZONAIS = [
+  {emoji:'🇧🇷', nome:'Independência',    data:'2026-09-07'},
+  {emoji:'🎁', nome:'Dia do Cliente',    data:'2026-09-15'},
+  {emoji:'🧒', nome:'Dia das Crianças',  data:'2026-10-12'}
+];
+
+/* ══════════════════════════════════════════════════════════════
+   ESTADO
+   ══════════════════════════════════════════════════════════════ */
+const state = {
+  screen:'hoje',
+  aba:'agendamento',      // aba do Calendário
+  vista:'mes',            // mes | semana | lista | quadro
+  mes:7, ano:2026,        // agosto/2026
+  rede:'todas',
+  soAguardando:false,     // filtro salvo que substitui o item "Aprovações"
+  mostrarVazias:false,
+  drawer:false,
+  slotEscolhido:0
+};
+
+/* ══════════════════════════════════════════════════════════════
+   HELPERS
+   ══════════════════════════════════════════════════════════════ */
+const MESES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+const M3 = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+const DIAS = ['DOM','SEG','TER','QUA','QUI','SEX','SÁB'];
+
+const esc = s => String(s??'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const iso = d => d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const parse = s => { const a=s.split('-').map(Number); return new Date(a[0],a[1]-1,a[2]); };
+const byId = id => POSTS.find(x=>x.id===id);
+
+/** dias de atraso — só conta para o que ainda não saiu */
+function atraso(post){
+  if(!post.data) return 0;
+  if(post.status==='publicado'||post.status==='erro') return 0;
+  if(post.status==='agendado') return 0;
+  const d = Math.round((HOJE - parse(post.data)) / 86400000);
+  return d > 0 ? d : 0;
+}
+function fraseAtraso(n){ return n===1 ? '1 dia atrasado' : n+' dias atrasado'; }
+
+/** filtro único, compartilhado pelas quatro vistas — sem whitelist por aba */
+function visiveis(){
+  return POSTS.filter(x=>{
+    if(state.soAguardando && x.status!=='aguardando') return false;
+    if(state.rede!=='todas' && !x.canais.includes(state.rede)) return false;
+    return true;
+  });
+}
+const semData = () => visiveis().filter(x=>!x.data);
+const comData = () => visiveis().filter(x=>x.data);
+
+function proximoSlots(n){
+  const out=[]; const d=new Date(HOJE);
+  while(out.length<n){
+    const dow=d.getDay();
+    if(dow>=1 && dow<=5){
+      for(const h of GRADE){
+        if(d.getTime()===HOJE.getTime()) continue;   // hoje já passou nesta simulação
+        const ocupado = POSTS.some(p=>p.data===iso(d) && p.hora===h && p.status!=='publicado');
+        if(!ocupado && out.length<n) out.push({data:iso(d), hora:h});
+      }
+    }
+    d.setDate(d.getDate()+1);
+  }
+  return out;
+}
+
+function dataLonga(isoStr, hora){
+  const d = parse(isoStr);
+  return d.getDate()+' de '+MESES[d.getMonth()] + (hora ? ' às '+hora : '');
+}
+
+/* ══════════════════════════════════════════════════════════════
+   ÍCONES
+   ══════════════════════════════════════════════════════════════ */
+const icon = (n,s=19) => ({
+  hoje:`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></svg>`,
+  cal:`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>`,
+  conteudo:`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="3" y="3" width="7" height="7" rx="1.6"/><rect x="14" y="3" width="7" height="7" rx="1.6"/><rect x="3" y="14" width="7" height="7" rx="1.6"/><rect x="14" y="14" width="7" height="7" rx="1.6"/></svg>`,
+  canais:`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="2.5"/><path d="M6.5 7a7 7 0 0 0 0 10M17.5 7a7 7 0 0 1 0 10M3.5 4a11 11 0 0 0 0 16M20.5 4a11 11 0 0 1 0 16"/></svg>`,
+  insights:`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 17l6-6 4 4 7-7"/><path d="M15 8h5v5"/></svg>`,
+  creators:`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="9" cy="8" r="3.2"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M16.5 5.5a3 3 0 0 1 0 5.6"/><path d="M18 20a5.6 5.6 0 0 0-2-4.3"/></svg>`,
+  prev:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 5l-7 7 7 7"/></svg>`,
+  next:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg>`,
+  alerta:`<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v5M12 16.5v.5"/><circle cx="12" cy="12" r="9"/></svg>`
+}[n] || '');
+
+/* ══════════════════════════════════════════════════════════════
+   NAVEGAÇÃO — 5 itens (era 11)
+   ══════════════════════════════════════════════════════════════ */
+const MENU = [
+  {key:'hoje',      label:'Hoje',       ico:'hoje'},
+  {key:'calendario',label:'Calendário', ico:'cal',
+   abas:[
+     {key:'agendamento', label:'Agendamento'},
+     {key:'ideias',      label:'Ideias'},
+     {key:'sazonais',    label:'Datas sazonais'},
+     {key:'aprovacoes',  label:'Aprovações', contador:true},
+     {key:'feedbacks',   label:'Feedbacks'}
+   ]},
+  {key:'conteudo',  label:'Conteúdo',   ico:'conteudo',
+   abas:[{key:'feed',label:'Feed'},{key:'stories',label:'Stories'},{key:'midia',label:'Mídia'}]},
+  {key:'canais',    label:'Canais',     ico:'canais'},
+  {key:'creators',  label:'Creators',   ico:'creators'},
+  {key:'insights',  label:'Insights',   ico:'insights',
+   abas:[{key:'visao',label:'Visão geral'},{key:'pesquisa',label:'Pesquisa'}]}
+];
+
+function pendentes(){ return POSTS.filter(x=>x.status==='aguardando'||x.status==='ajuste').length; }
+
+function renderNav(){
+  const n = pendentes();
+  document.getElementById('nav').innerHTML = MENU.map(m=>{
+    const ativo = state.screen===m.key;
+    // o contador vive no item quando as abas estão fechadas, e na aba quando abertas
+    const mostraNoItem = m.key==='calendario' && n && !ativo;
+    let html = `<button class="nav-item" ${ativo?'aria-current="page"':''} onclick="irPara('${m.key}')">
+        ${icon(m.ico)}<span class="grow">${m.label}</span>
+        ${mostraNoItem ? `<span class="nav-count">${n}</span>` : ''}
+      </button>`;
+    if(ativo && m.abas){
+      html += `<div class="nav-sub">` + m.abas.map(a=>`
+        <button class="nav-subitem" ${state.aba===a.key?'aria-current="true"':''} onclick="irAba('${a.key}')">
+          <span style="flex:1">${a.label}</span>
+          ${a.contador && n ? `<span class="nav-count">${n}</span>` : ''}
+        </button>`).join('') + `</div>`;
+    }
+    return html;
+  }).join('');
+}
+
+function irPara(k){
+  state.screen = k;
+  if(k==='calendario') state.aba='agendamento';
+  if(k==='conteudo') state.aba='feed';
+  if(k==='insights') state.aba='visao';
+  state.soAguardando = false;
+  render();
+}
+function irAba(k){
+  state.aba = k;
+  // "Aprovações" é um filtro salvo dentro do Calendário, não uma tela separada
+  state.soAguardando = (k==='aprovacoes');
+  if(k==='aprovacoes') state.vista='quadro';
+  if(k==='ideias')     state.vista='quadro';
+  render();
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TELA: HOJE — absorve Início e Dashboard
+   ══════════════════════════════════════════════════════════════ */
+function telaHoje(){
+  const atrasados = POSTS.filter(x=>atraso(x)>0).sort((a,b)=>atraso(b)-atraso(a));
+  const aguardando = POSTS.filter(x=>x.status==='aguardando').length;
+  const rascunhos  = POSTS.filter(x=>x.status==='rascunho').length;
+  const agendados  = POSTS.filter(x=>x.status==='agendado').length;
+  const publicados = POSTS.filter(x=>x.status==='publicado' && x.data && x.data.startsWith('2026-08')).length;
+
+  return `
+    <h2 class="page-title">Olá, Paulo</h2>
+    <p class="page-sub">Segunda, 24 de agosto · Esmeralda Praia Hotel</p>
+
+    <div class="stats">
+      <div class="card stat crit">
+        <div class="stat-n">${aguardando}</div>
+        <div class="stat-l">esperando aprovação<br><b style="color:var(--st-erro)">todos com data vencida</b></div>
+      </div>
+      <div class="card stat warn">
+        <div class="stat-n">${rascunhos}</div>
+        <div class="stat-l">rascunhos parados<br>o mais antigo há 27 dias</div>
+      </div>
+      <div class="card stat ok">
+        <div class="stat-n">${agendados}</div>
+        <div class="stat-l">agendado para sair<br>próximo: 26 de agosto</div>
+      </div>
+      <div class="card stat info">
+        <div class="stat-n">${publicados}</div>
+        <div class="stat-l">publicados em agosto</div>
+      </div>
+    </div>
+
+    <div class="section-h">
+      <h2>Precisam de atenção</h2>
+      <span class="badge" style="background:var(--st-erro);color:#fff">${atrasados.length}</span>
+    </div>
+    <div class="alerts">
+      ${atrasados.slice(0,6).map(x=>`
+        <button class="alert" onclick="abrirPost('${x.id}')">
+          <span style="color:var(--st-erro);display:flex">${icon('alerta')}</span>
+          <span class="alert-b">
+            <span class="alert-t">${esc(x.titulo)}</span>
+            <span class="alert-m">${ST[x.status].label} · era ${dataLonga(x.data, x.hora)}</span>
+          </span>
+          <span class="alert-late">${fraseAtraso(atraso(x))}</span>
+        </button>`).join('')}
+      ${atrasados.length>6 ? `<button class="btn btn-ghost" style="align-self:flex-start" onclick="irPara('calendario');irAba('aprovacoes')">Ver todos os ${atrasados.length}</button>` : ''}
+    </div>
+
+    <div class="section-h"><h2>Ações rápidas</h2></div>
+    <div class="quick">
+      <button class="btn btn-primary" onclick="toast('Novo post — fora do escopo do protótipo')">+ Criar post</button>
+      <button class="btn" onclick="irPara('calendario');irAba('aprovacoes')">Revisar os ${aguardando} pendentes</button>
+      <button class="btn" onclick="irPara('calendario')">Abrir calendário</button>
+      <button class="btn" onclick="toggleDrawer()">Ideias sem data (${semData().length})</button>
+    </div>`;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TELA: CALENDÁRIO — uma fonte, quatro lentes
+   ══════════════════════════════════════════════════════════════ */
+function barraCalendario(){
+  const vistas = [['mes','Mês'],['semana','Semana'],['lista','Lista'],['quadro','Quadro']];
+  const redes = [['todas','Todas'],['instagram','Instagram'],['stories','Stories'],['facebook','Facebook'],['tiktok','TikTok'],['youtube','YouTube']];
+  const n = pendentes();
+
+  return `
+    <div class="cal-bar">
+      <div class="month-nav">
+        <button class="btn btn-ghost btn-icon" onclick="mudarMes(-1)" aria-label="Mês anterior">${icon('prev')}</button>
+        <span class="month-label">${MESES[state.mes]} de ${state.ano}</span>
+        <button class="btn btn-ghost btn-icon" onclick="mudarMes(1)" aria-label="Próximo mês">${icon('next')}</button>
+      </div>
+      <button class="btn" onclick="irHoje()">Hoje</button>
+      <div style="flex:1"></div>
+      <div class="seg" role="group" aria-label="Vista">
+        ${vistas.map(([k,l])=>`<button ${state.vista===k?'aria-pressed="true"':'aria-pressed="false"'} onclick="setVista('${k}')">${l}</button>`).join('')}
+      </div>
+    </div>
+
+    <div class="seasonal">
+      ${SAZONAIS.map(s=>{
+        const dias = Math.round((parse(s.data)-HOJE)/86400000);
+        return `<div class="season"><span class="season-e">${s.emoji}</span>
+          <span><span class="season-t" style="display:block">${s.nome}</span>
+          <span class="season-d">${parse(s.data).getDate()}/${String(parse(s.data).getMonth()+1).padStart(2,'0')} · faltam ${dias} dias</span></span></div>`;
+      }).join('')}
+    </div>
+
+    <div class="filters">
+      <button class="chip" aria-pressed="${state.soAguardando}" onclick="toggleAguardando()">
+        Aguardando aprovação${n?` · ${n}`:''}
+      </button>
+      <span class="sep"></span>
+      ${redes.map(([k,l])=>`<button class="chip" aria-pressed="${state.rede===k}" onclick="setRede('${k}')">${l}</button>`).join('')}
+    </div>
+
+    <div class="legend">
+      ${ORDEM_QUADRO.map(k=>`<span><i style="background:${ST[k].cor}"></i>${ST[k].label}</span>`).join('')}
+      <span><i style="background:var(--st-erro)"></i>Atrasado</span>
+    </div>`;
+}
+
+function itemMes(x){
+  const late = atraso(x);
+  const meta = late ? fraseAtraso(late) : (x.hora||'');
+  return `<button class="pitem ${late?'late':''}" draggable="true"
+      style="border-left-color:${late?'var(--st-erro)':ST[x.status].cor}"
+      ondragstart="dragStart(event,'${x.id}')" ondragend="dragEnd(event)"
+      onclick="abrirPost('${x.id}')" title="${esc(x.titulo)}">
+    <span class="pitem-thumb" style="background:${x.thumb}"></span>
+    <span class="pitem-b">
+      <span class="pitem-t">${esc(x.titulo)}</span>
+      <span class="pitem-m">${esc(meta)}</span>
+    </span>
+  </button>`;
+}
+
+function vistaMes(){
+  const primeiro = new Date(state.ano, state.mes, 1).getDay();
+  const dim = new Date(state.ano, state.mes+1, 0).getDate();
+  const dimPrev = new Date(state.ano, state.mes, 0).getDate();
+  const posts = comData();
+  let html = `<div class="grid-head">${DIAS.map(d=>`<div>${d}</div>`).join('')}</div><div class="grid">`;
+
+  for(let i=0;i<42;i++){
+    const num = i - primeiro + 1;
+    const dentro = num>=1 && num<=dim;
+    const mostra = dentro ? num : (num<1 ? dimPrev+num : num-dim);
+    if(!dentro){ html += `<div class="day out"><span class="day-n">${mostra}</span></div>`; continue; }
+
+    const isoDia = `${state.ano}-${String(state.mes+1).padStart(2,'0')}-${String(num).padStart(2,'0')}`;
+    const hoje = parse(isoDia).getTime()===HOJE.getTime();
+    const doDia = posts.filter(x=>x.data===isoDia).sort((a,b)=>(a.hora||'').localeCompare(b.hora||''));
+    const saz = SAZONAIS.find(s=>s.data===isoDia);
+
+    html += `<div class="day ${hoje?'today':''}" data-iso="${isoDia}"
+        ondragover="dragOver(event,'${isoDia}')" ondragleave="dragLeave(event)" ondrop="dropDia(event,'${isoDia}')">
+      <div class="day-n">${num}${saz?` <span title="${saz.nome}">${saz.emoji}</span>`:''}
+        ${hoje?'<span class="day-today-tag">HOJE</span>':''}</div>
+      ${doDia.slice(0,3).map(itemMes).join('')}
+      ${doDia.length>3?`<button class="day-more" onclick="setVista('lista')">+${doDia.length-3} no dia</button>`:''}
+    </div>`;
+  }
+  return html + `</div>`;
+}
+
+function vistaSemana(){
+  // semana que contém hoje: domingo 23 → sábado 29 de agosto
+  const base = new Date(HOJE); base.setDate(base.getDate() - base.getDay());
+  const posts = comData();
+  let head='', body='';
+  for(let i=0;i<7;i++){
+    const d = new Date(base); d.setDate(base.getDate()+i);
+    const isoDia = iso(d);
+    const hoje = d.getTime()===HOJE.getTime();
+    const doDia = posts.filter(x=>x.data===isoDia).sort((a,b)=>(a.hora||'').localeCompare(b.hora||''));
+    head += `<div>${DIAS[i]} ${d.getDate()}</div>`;
+    body += `<div class="day ${hoje?'today':''}" ondragover="dragOver(event,'${isoDia}')" ondragleave="dragLeave(event)" ondrop="dropDia(event,'${isoDia}')">
+      <div class="day-n">${d.getDate()} de ${M3[d.getMonth()]}${hoje?' <span class="day-today-tag">HOJE</span>':''}</div>
+      ${doDia.map(itemMes).join('') || `<span style="font-size:var(--fs-1);color:var(--text-3);padding:4px">Nada neste dia</span>`}
+    </div>`;
+  }
+  return `<div class="grid-head">${head}</div><div class="week">${body}</div>`;
+}
+
+function vistaLista(){
+  const posts = comData().sort((a,b)=> a.data.localeCompare(b.data) || (a.hora||'').localeCompare(b.hora||''));
+  if(!posts.length) return vazio();
+  const grupos = {};
+  posts.forEach(x=>{ (grupos[x.data] = grupos[x.data] || []).push(x); });
+
+  return Object.keys(grupos).sort().map(k=>{
+    const d = parse(k);
+    const hoje = d.getTime()===HOJE.getTime();
+    return `<div class="list-group">
+      <div class="list-date">
+        <b>${d.getDate()} de ${MESES[d.getMonth()]}</b>
+        <span>${DIAS[d.getDay()]}${hoje?' · hoje':''}</span>
+      </div>
+      <div class="list-rows">
+        ${grupos[k].map(x=>{
+          const late = atraso(x);
+          return `<button class="lrow ${late?'late':''}" style="border-left-color:${late?'var(--st-erro)':ST[x.status].cor}" onclick="abrirPost('${x.id}')">
+            <span class="lrow-time">${esc(x.hora||'')}</span>
+            <span class="lrow-thumb" style="background:${x.thumb}"></span>
+            <span class="lrow-b">
+              <span class="lrow-t">${esc(x.titulo)}</span>
+              <span class="lrow-c">${esc(x.caption)}</span>
+            </span>
+            <span class="badge" style="background:${ST[x.status].cor};color:#fff">${ST[x.status].label}</span>
+            ${late?`<span class="late-tag">${fraseAtraso(late)}</span>`:''}
+          </button>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function vistaQuadro(){
+  const posts = visiveis();
+  const cheias=[], vazias=[];
+  ORDEM_QUADRO.forEach(k=>{
+    const doStatus = posts.filter(x=>x.status===k)
+      .sort((a,b)=> (b.data||'').localeCompare(a.data||''));
+    (doStatus.length ? cheias : vazias).push([k, doStatus]);
+  });
+
+  const coluna = ([k, itens]) => `
+    <div class="col">
+      <div class="col-h">
+        <span class="col-dot" style="background:${ST[k].cor}"></span>
+        <span class="col-t">${ST[k].label}</span>
+        <span class="col-n">${itens.length}</span>
+      </div>
+      <div class="col-body">
+        ${itens.map(x=>{
+          const late = atraso(x);
+          return `<button class="bcard ${late?'late':''}" style="border-left-color:${late?'var(--st-erro)':ST[k].cor}" onclick="abrirPost('${x.id}')">
+            <span class="bcard-top">
+              ${x.data ? parse(x.data).getDate()+' '+M3[parse(x.data).getMonth()]+' · '+x.hora : 'sem data'}
+              · ${x.canais.map(c=>c[0].toUpperCase()+c.slice(1)).join(', ')}
+            </span>
+            <span class="bcard-t">${esc(x.titulo)}</span>
+            ${x.caption?`<span class="bcard-c">${esc(x.caption)}</span>`:''}
+            ${late?`<span class="bcard-f"><span class="late-tag">${icon('alerta',13)} ${fraseAtraso(late)}</span></span>`:''}
+          </button>`;
+        }).join('')}
+      </div>
+    </div>`;
+
+  let html = `<div class="board">${cheias.map(coluna).join('')}</div>`;
+
+  // colunas vazias viram faixa fina horizontal — não tarja vertical girada
+  if(vazias.length){
+    html += `<div class="empties">`;
+    if(state.mostrarVazias){
+      html += vazias.map(([k])=>`<div class="col-empty">
+          <span class="col-dot" style="background:${ST[k].cor}"></span>${ST[k].label}
+          <span style="margin-left:auto;color:var(--text-3)">vazia</span></div>`).join('');
+      html += `<button class="btn btn-ghost" style="align-self:flex-start" onclick="toggleVazias()">Ocultar vazias</button>`;
+    } else {
+      html += `<button class="col-empty" onclick="toggleVazias()" style="cursor:pointer">
+        ${vazias.map(([k])=>`<span class="col-dot" style="background:${ST[k].cor}"></span>`).join('')}
+        <span>${vazias.length} colunas vazias</span>
+        <span style="margin-left:auto;color:var(--accent)">mostrar</span></button>`;
+    }
+    html += `</div>`;
+  }
+  return html;
+}
+
+function vazio(){
+  return `<div class="stub"><h2>Nada por aqui</h2><p>Nenhum post corresponde aos filtros ativos. Limpe o filtro de rede ou o de aprovação para ver tudo de novo.</p></div>`;
+}
+
+function telaCalendario(){
+  const vista = {mes:vistaMes, semana:vistaSemana, lista:vistaLista, quadro:vistaQuadro}[state.vista];
+  return barraCalendario() + vista();
+}
+
+/* Conexão Creators: campanhas, condições do contrato, acessos e documentos assinados.
+   No site do hotel a área da equipe abre embutida; no claude.ai (sem iframe/fetch) viram links. */
+const CC = {base:'https://creators.187-127-26-180.nip.io/', esm:'https://claude.ai/artifact/QoNZKCw6EnFffJy5uAF25w'};
+function telaCreators(){
+  const noSite = /esmeraldapraiahotel\.com\.br$|nip\.io$|github\.io$|^localhost$/.test(location.hostname);
+  const links = `<div class="creators-links">
+      <a href="${CC.base}admin/" target="_blank" rel="noopener"><b>Área da equipe ↗</b><span>Campanhas, condições do contrato, acesso do creator, documentos assinados</span></a>
+      <a href="${CC.base}" target="_blank" rel="noopener"><b>Guia do creator ↗</b><span>O que o creator vê depois de entrar com o login dele</span></a>
+      <a href="${CC.esm}" target="_blank" rel="noopener"><b>EsmCreators ↗</b><span>Funil, fichas, aprovação do supervisor e etapa Termo de parceria</span></a>
+    </div>`;
+  if(noSite) return `<iframe class="creators-frame" src="../admin/" title="Conexão Creators · área da equipe"></iframe>
+    <p class="page-sub" style="margin-top:var(--sp-2)">Aberto aqui dentro com o seu login do hub. Precisa de tela cheia? <a href="../admin/" target="_blank" rel="noopener">abrir em outra aba</a>.</p>` + links;
+  return `<h2 class="page-title">Conexão Creators</h2>
+    <p class="page-sub">Aqui no claude.ai a área da equipe não abre embutida (o sandbox bloqueia). Use o EsmSocial hospedado no site do hotel, ou os links abaixo.</p>` + links;
+}
+
+function telaStub(titulo, texto){
+  return `<div class="stub" style="margin-top:var(--sp-5)"><h2>${titulo}</h2><p>${texto}</p></div>`;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RENDER
+   ══════════════════════════════════════════════════════════════ */
+const TITULOS = {hoje:'Hoje', calendario:'Calendário', conteudo:'Conteúdo', canais:'Canais', creators:'Creators · Conexão Creators', insights:'Insights'};
+
+function render(){
+  renderNav();
+  document.getElementById('pageTitle').textContent = TITULOS[state.screen];
+  const el = document.getElementById('screen');
+
+  if(state.screen==='hoje')            el.innerHTML = telaHoje();
+  else if(state.screen==='calendario') el.innerHTML = telaCalendario();
+  else if(state.screen==='conteudo')   el.innerHTML = telaStub('Conteúdo', 'Feed, Stories e Mídia entram aqui como abas desta área. Fora do escopo deste protótipo, que cobre o shell novo, a tela Hoje e o Calendário unificado.');
+  else if(state.screen==='canais')     el.innerHTML = telaStub('Canais', 'Canal VIP do Instagram e WhatsApp de agentes. Fora do escopo deste protótipo.');
+  else if(state.screen==='creators')   el.innerHTML = telaCreators();
+  else                                 el.innerHTML = telaStub('Insights', 'Visão geral e Pesquisa entram aqui como abas, absorvendo o antigo Dashboard. Fora do escopo deste protótipo.');
+
+  // gaveta
+  const sd = semData();
+  document.getElementById('drawerCount').textContent = sd.length;
+  document.getElementById('drawerList').innerHTML = sd.map(x=>`
+    <button class="bcard" draggable="true" style="border-left-color:${ST[x.status].cor}"
+      ondragstart="dragStart(event,'${x.id}')" ondragend="dragEnd(event)" onclick="abrirPost('${x.id}')">
+      <span class="bcard-top">${ST[x.status].label} · ${x.canais.join(', ')}</span>
+      <span class="bcard-t">${esc(x.titulo)}</span>
+      ${x.caption?`<span class="bcard-c">${esc(x.caption)}</span>`:''}
+    </button>`).join('') || `<p class="drawer-note">Nada sem data.</p>`;
+}
+
+function setVista(v){ state.vista=v; render(); }
+function setRede(r){ state.rede=r; render(); }
+function toggleVazias(){ state.mostrarVazias=!state.mostrarVazias; render(); }
+function toggleAguardando(){
+  state.soAguardando=!state.soAguardando;
+  if(state.soAguardando && state.vista==='mes') state.vista='quadro';
+  render();
+}
+function mudarMes(d){
+  let m=state.mes+d, a=state.ano;
+  if(m<0){m=11;a--} if(m>11){m=0;a++}
+  state.mes=m; state.ano=a; render();
+}
+function irHoje(){ state.mes=HOJE.getMonth(); state.ano=HOJE.getFullYear(); render(); }
+function toggleDrawer(){
+  state.drawer=!state.drawer;
+  const d=document.getElementById('drawer');
+  d.classList.toggle('open', state.drawer);
+  d.setAttribute('aria-hidden', String(!state.drawer));
+}
+
+/* ══════════════════════════════════════════════════════════════
+   ARRASTAR PARA REAGENDAR
+   ══════════════════════════════════════════════════════════════ */
+let arrastando = null;
+
+function dragStart(ev,id){
+  arrastando = id;
+  ev.dataTransfer.effectAllowed='move';
+  try{ ev.dataTransfer.setData('text/plain',id); }catch(e){}
+  ev.currentTarget.classList.add('dragging');
+}
+function dragEnd(ev){ ev.currentTarget.classList.remove('dragging'); arrastando=null; }
+function dragOver(ev,isoDia){
+  ev.preventDefault();
+  const passado = parse(isoDia) < HOJE;
+  ev.currentTarget.classList.add(passado ? 'nodrop' : 'drop');
+  ev.dataTransfer.dropEffect = passado ? 'none' : 'move';
+}
+function dragLeave(ev){ ev.currentTarget.classList.remove('drop','nodrop'); }
+
+function dropDia(ev,isoDia){
+  ev.preventDefault();
+  ev.currentTarget.classList.remove('drop','nodrop');
+  const id = arrastando || ev.dataTransfer.getData('text/plain');
+  const post = byId(id);
+  if(!post) return;
+
+  // arrastar para o passado é bloqueado, com aviso
+  if(parse(isoDia) < HOJE){
+    toast('Não dá para agendar para uma data que já passou', true);
+    return;
+  }
+  post.data = isoDia;
+  if(!post.hora) post.hora = GRADE[1];
+  if(post.status==='ideia' || post.status==='aprovado') post.status='agendado';
+  toast(`"${post.titulo}" movido para ${dataLonga(isoDia, post.hora)}`);
+  render();
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MODAL DO POST + APROVAÇÃO EM TRÊS RAMOS
+   ══════════════════════════════════════════════════════════════ */
+function abrirModal(html){
+  const m=document.getElementById('modal');
+  m.innerHTML=html;
+  m.classList.add('open');
+  document.getElementById('scrim').classList.add('open');
+}
+function closeModal(){
+  document.getElementById('modal').classList.remove('open');
+  document.getElementById('scrim').classList.remove('open');
+}
+
+function abrirPost(id){
+  const x = byId(id);
+  if(!x) return;
+  const late = atraso(x);
+  const podeAprovar = (x.status==='aguardando' || x.status==='ajuste');
+
+  abrirModal(`
+    <div class="modal-h">
+      <span style="width:44px;height:44px;flex:none;border-radius:var(--r-ctl);background:${x.thumb}"></span>
+      <div style="flex:1;min-width:0">
+        <h3>${esc(x.titulo)}</h3>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:5px;flex-wrap:wrap">
+          <span class="badge" style="background:${ST[x.status].cor};color:#fff">${ST[x.status].label}</span>
+          ${late?`<span class="late-tag">${icon('alerta',13)} ${fraseAtraso(late)}</span>`:''}
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-icon" onclick="closeModal()" aria-label="Fechar">✕</button>
+    </div>
+    <div class="modal-b">
+      <dl class="kv">
+        <dt>Quando</dt><dd>${x.data ? dataLonga(x.data, x.hora) : '<span style="color:var(--text-3)">sem data definida</span>'}</dd>
+        <dt>Publicar em</dt><dd>${x.canais.map(c=>c[0].toUpperCase()+c.slice(1)).join(' · ')}</dd>
+        <dt>Responsável</dt><dd>Paulo Cid</dd>
+      </dl>
+      <div class="label" style="margin-bottom:8px">Legenda</div>
+      <div class="caption-box">${esc(x.caption)||'<span style="color:var(--text-3)">Sem legenda ainda.</span>'}</div>
+    </div>
+    <div class="modal-f">
+      <button class="btn" onclick="closeModal()">Fechar</button>
+      ${podeAprovar?`
+        <button class="btn btn-danger" onclick="pedirAjuste('${x.id}')">Pedir ajuste</button>
+        <button class="btn btn-primary" onclick="aprovar('${x.id}')">Aprovar</button>`:''}
+    </div>`);
+}
+
+function pedirAjuste(id){
+  const x = byId(id);
+  x.status = 'ajuste';
+  closeModal(); render();
+  toast(`Ajuste solicitado em "${x.titulo}"`);
+}
+
+/**
+ * Aprovação em três ramos — a regra central do redesenho.
+ *   1. data futura  → agenda sozinho, sem clique
+ *   2. data vencida → NÃO agenda em silêncio; propõe o próximo slot livre
+ *   3. sem data     → fica "aprovado sem data", na gaveta
+ */
+function aprovar(id){
+  const x = byId(id);
+
+  // ramo 3 — sem data
+  if(!x.data){
+    x.status='aprovado';
+    closeModal(); render();
+    toast(`"${x.titulo}" aprovado · sem data. Está na gaveta lateral.`);
+    return;
+  }
+
+  // ramo 1 — data no futuro: agenda direto
+  if(parse(x.data) > HOJE){
+    x.status='agendado';
+    closeModal(); render();
+    toast(`Agendado para ${dataLonga(x.data, x.hora)}`);
+    return;
+  }
+
+  // ramo 2 — data vencida: pede confirmação, sugere o próximo slot livre
+  state.slotEscolhido = 0;
+  const slots = proximoSlots(3);
+  abrirModal(`
+    <div class="modal-h">
+      <div style="flex:1">
+        <h3>Esta data já passou</h3>
+        <div style="font-size:var(--fs-2);color:var(--text-3);margin-top:4px">${esc(x.titulo)}</div>
+      </div>
+      <button class="btn btn-ghost btn-icon" onclick="closeModal()" aria-label="Fechar">✕</button>
+    </div>
+    <div class="modal-b">
+      <div class="warnbox">
+        <span style="color:var(--st-erro);flex:none;display:flex;padding-top:1px">${icon('alerta')}</span>
+        <div>
+          <b>A data de ${parse(x.data).getDate()}/${String(parse(x.data).getMonth()+1).padStart(2,'0')} já passou há ${atraso(x)} dias.</b>
+          <p>Aprovar não vai publicar este post agora. Escolha um novo horário para ele entrar na fila.</p>
+        </div>
+      </div>
+      <div class="label" style="margin-bottom:10px">Próximos horários livres da sua grade</div>
+      <div id="slots">
+        ${slots.map((s,i)=>`
+          <button class="slot" aria-pressed="${i===0}" onclick="escolherSlot(${i})">
+            <span style="flex:1">
+              <span class="slot-d" style="display:block">${dataLonga(s.data, s.hora)}</span>
+              <span class="slot-s">${DIAS[parse(s.data).getDay()]}${i===0?' · primeiro livre':''}</span>
+            </span>
+          </button>`).join('')}
+      </div>
+    </div>
+    <div class="modal-f">
+      <button class="btn" onclick="abrirPost('${x.id}')">Voltar</button>
+      <button class="btn btn-primary" onclick="confirmarReagendamento('${x.id}')">Aprovar e agendar</button>
+    </div>`);
+}
+
+function escolherSlot(i){
+  state.slotEscolhido = i;
+  [...document.querySelectorAll('#slots .slot')].forEach((b,j)=>b.setAttribute('aria-pressed', String(i===j)));
+}
+
+function confirmarReagendamento(id){
+  const x = byId(id);
+  const s = proximoSlots(3)[state.slotEscolhido];
+  x.data = s.data; x.hora = s.hora; x.status='agendado';
+  state.mes = parse(s.data).getMonth();
+  state.ano = parse(s.data).getFullYear();
+  closeModal(); render();
+  toast(`Aprovado e agendado para ${dataLonga(s.data, s.hora)}`);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TOASTS
+   ══════════════════════════════════════════════════════════════ */
+function toast(msg, erro){
+  const t=document.createElement('div');
+  t.className='toast'+(erro?' err':'');
+  t.textContent=msg;
+  document.getElementById('toasts').appendChild(t);
+  setTimeout(()=>t.remove(), 3200);
+}
+
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape'){ closeModal(); if(state.drawer) toggleDrawer(); }
+});
+
+/* deep link: #creators abre a aba do Conexão Creators */
+if(location.hash==='#creators') state.screen='creators';
+render();
+</script>
+
+</body></html>
