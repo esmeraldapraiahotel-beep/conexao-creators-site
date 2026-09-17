@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Conexão Creators · Equipe</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#F2F2F2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+/* Conexão Creators — área da equipe (login Supabase Auth + allowlist creator_admins) */
+:root{
+  --sans:"Raleway",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --fundo:#F2F2F2; --branco:#FFFFFF; --cinza:#ECECEC; --cinza-2:#DCDCDC;
+  --caramelo:#C79362; --ocre:#AE8351; --marrom:#7D5E44; --marrom-2:#966E4D; --escuro:#5B4332; --ink:#1E1E1E; --verde:#4B5C50;
+  --linha:rgba(30,30,30,.1); --alerta:#A63A30; --alerta-bg:#F6E4DA; --alerta-linha:#E2BFAB;
+  --borda:14px; --mola:cubic-bezier(.22,.9,.28,1);
+}
+*{box-sizing:border-box}
+html{background:var(--fundo)}
+body{margin:0;font-family:var(--sans);font-size:15px;line-height:1.6;color:var(--marrom);background:var(--fundo);font-weight:500;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-weight:800;letter-spacing:-.02em;color:var(--escuro);margin:0;text-wrap:balance}
+p{margin:0 0 10px}
+a{color:var(--ocre);font-weight:700}
+button{font:inherit;cursor:pointer}
+input,select,textarea{font:inherit}
+:focus-visible{outline:2px solid var(--ocre);outline-offset:3px}
+.sv{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;display:block;flex:0 0 auto}
+.kicker{font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;color:var(--marrom-2)}
+
+.topo{background:var(--escuro);color:var(--branco);padding:calc(14px + env(safe-area-inset-top,0px)) 20px 14px}
+.topo .in{max-width:1120px;margin:0 auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.topo img{width:118px;height:auto;display:block}
+.topo .t{font-weight:800;font-size:15px;letter-spacing:.01em;color:var(--branco)}
+.topo .t small{display:block;font-weight:600;font-size:11px;letter-spacing:.18em;text-transform:uppercase;opacity:.7}
+.topo .quem{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:13px;color:rgba(255,255,255,.85)}
+.topo .quem button{background:rgba(255,255,255,.12);border:0;color:var(--branco);border-radius:99px;padding:7px 13px;font-size:12.5px;font-weight:700}
+
+.pagina{max-width:1120px;margin:0 auto;padding:22px 20px calc(40px + env(safe-area-inset-bottom,0px))}
+.grade{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:18px;align-items:start}
+@media (max-width:900px){.grade{grid-template-columns:1fr}}
+
+.cartao{background:var(--branco);border:1px solid var(--linha);border-radius:var(--borda);padding:18px 18px 20px;margin-bottom:18px}
+.cartao h2{font-size:19px;margin-bottom:4px}
+.cartao .sub{font-size:13.5px;color:var(--marrom-2);margin-bottom:14px}
+.cab{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.cab h2{flex:1}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--cinza-2);background:var(--cinza);color:var(--escuro);
+  font-size:13.5px;font-weight:700;border-radius:99px;padding:10px 16px;text-decoration:none;transition:transform .2s var(--mola),background .2s}
+.btn:active{transform:scale(.96)}
+.btn.cheio{background:var(--escuro);border-color:var(--escuro);color:var(--branco)}
+.btn.cheio:disabled{opacity:.45;cursor:default}
+.btn.mini{padding:6px 11px;font-size:12px}
+.btn.perigo{color:var(--alerta);border-color:var(--alerta-linha);background:var(--alerta-bg)}
+
+.campo{display:block;margin-bottom:12px}
+.campo>span{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--marrom-2);margin-bottom:5px}
+.campo input,.campo select,.campo textarea{width:100%;font-size:15px;font-weight:600;color:var(--escuro);background:var(--branco);
+  border:1.5px solid var(--cinza-2);border-radius:11px;padding:11px 12px;outline:none;transition:border-color .2s,box-shadow .2s}
+.campo input:focus,.campo select:focus,.campo textarea:focus{border-color:var(--ocre);box-shadow:0 0 0 3px rgba(174,131,81,.18)}
+.campo textarea{min-height:120px;resize:vertical;line-height:1.5;font-weight:500}
+.campo .aj{display:block;font-size:12px;color:var(--marrom-2);margin-top:4px}
+.campo input.falta{border-color:var(--caramelo);background:#FBF6EF}
+.duas{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+@media (max-width:520px){.duas{grid-template-columns:1fr}}
+.tres{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 12px}
+@media (max-width:640px){.tres{grid-template-columns:1fr}}
+.secao{margin-top:18px;padding-top:14px;border-top:1px solid var(--linha)}
+.secao h3{font-size:15px;margin-bottom:10px}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;margin-bottom:6px}
+@media (max-width:520px){.checks{grid-template-columns:1fr}}
+.checks label{display:flex;gap:9px;align-items:flex-start;font-size:14px;line-height:1.45;color:var(--escuro);font-weight:600;cursor:pointer}
+.checks input{accent-color:var(--ocre);width:17px;height:17px;margin:3px 0 0;flex:0 0 auto}
+
+.msg{font-size:13.5px;line-height:1.5;padding:11px 13px;border-radius:11px;margin-top:12px;display:none}
+.msg.on{display:block}
+.msg.erro{background:var(--alerta-bg);color:var(--alerta);border:1px solid var(--alerta-linha)}
+.msg.ok{background:#E8EEE9;color:var(--verde);border:1px solid #C9D6CC}
+.msg.info{background:var(--cinza);color:var(--escuro);border:1px solid var(--cinza-2)}
+
+.pend{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
+.pend span{font-size:12px;font-weight:700;padding:4px 10px;border-radius:99px;background:#FBF0E2;color:var(--ocre);border:1px solid #EBD5B8}
+.pend span.ok{background:#E8EEE9;color:var(--verde);border-color:#C9D6CC}
+
+.lista-camp{list-style:none;margin:0 0 4px;padding:0}
+.lista-camp li{display:flex;align-items:center;gap:12px;padding:11px 12px;border:1px solid var(--linha);border-radius:11px;margin-bottom:8px;background:var(--branco);cursor:pointer;transition:background .2s}
+.lista-camp li:hover{background:var(--cinza)}
+.lista-camp li.on{border-color:var(--ocre);background:#FBF6EF}
+.lista-camp b{display:block;color:var(--escuro);font-size:14.5px}
+.lista-camp span{display:block;font-size:12.5px;color:var(--marrom-2)}
+.lista-camp .n{margin-left:auto;font-size:12px;font-weight:700;background:var(--cinza);border-radius:99px;padding:3px 9px;color:var(--escuro)}
+
+.assin{border:1px solid var(--linha);border-radius:12px;padding:14px;margin-bottom:10px;background:var(--branco);display:grid;grid-template-columns:1fr auto;gap:8px 14px}
+.assin .nome{font-weight:800;color:var(--escuro);font-size:15.5px}
+.assin .papel{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:99px;background:var(--cinza);color:var(--escuro);margin-left:6px;vertical-align:middle}
+.assin dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:8px 0 0;font-size:13px}
+.assin dt{color:var(--marrom-2);font-weight:600}
+.assin dd{margin:0;color:var(--escuro);font-weight:600;word-break:break-word}
+.assin .img{grid-column:2;grid-row:1/3;align-self:start;background:var(--cinza);border-radius:9px;padding:6px;width:150px}
+.assin .img img{display:block;max-width:100%;max-height:60px;margin:0 auto}
+.assin .acoes{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+@media (max-width:520px){.assin{grid-template-columns:1fr}.assin .img{grid-column:1;grid-row:auto;width:150px}}
+.vazio{padding:22px;text-align:center;color:var(--marrom-2);font-size:14px;border:1px dashed var(--cinza-2);border-radius:12px}
+
+#login{max-width:420px;margin:40px auto}
+[hidden]{display:none!important}
+.rodape{text-align:center;font-size:12px;color:var(--marrom-2);margin-top:26px}
+</style>
+</head>
+<body>
+<header class="topo"><div class="in">
+  <img src="../luisa/img/logo-creme.png" alt="Esmeralda Praia Hotel">
+  <div class="t"><small>Conexão Creators</small>Área da equipe</div>
+  <div class="quem" id="quem" hidden><span id="quem-email"></span><button type="button" id="sair">Sair</button></div>
+</div></header>
+
+<main class="pagina">
+
+  <section class="cartao" id="login">
+    <h2>Entrar</h2>
+    <p class="sub">Use o seu login do hub Esmeralda. Só e-mails autorizados enxergam esta área.</p>
+    <label class="campo"><span>E-mail</span><input type="email" id="l-email" autocomplete="username" placeholder="voce@esmeraldapraiahotel.com.br"></label>
+    <label class="campo"><span>Senha</span><input type="password" id="l-senha" autocomplete="current-password"></label>
+    <button class="btn cheio" id="entrar" type="button" style="width:100%">Entrar</button>
+    <div class="msg" id="l-msg"></div>
+  </section>
+
+  <div class="grade" id="app" hidden>
+    <div>
+      <section class="cartao">
+        <div class="cab"><h2>Campanhas</h2><button class="btn mini" type="button" id="nova-camp">+ Nova</button></div>
+        <ul class="lista-camp" id="lista-camp"></ul>
+        <div class="msg" id="camp-msg"></div>
+      </section>
+
+      <section class="cartao" id="esm-recebido" hidden>
+        <h2>Dados recebidos do EsmCreators</h2>
+        <p class="sub" id="esm-txt"></p>
+        <div style="display:flex;gap:9px;flex-wrap:wrap">
+          <button class="btn cheio" type="button" id="esm-aplicar">Atualizar as condições com esses dados</button>
+          <button class="btn" type="button" id="esm-ignorar">Ignorar</button>
+        </div>
+      </section>
+
+      <section class="cartao" id="editor" hidden>
+        <div class="cab"><h2 id="ed-titulo">Condições do contrato</h2>
+          <button class="btn mini" type="button" id="ed-copiar-guia">⧉ Link do guia</button>
+          <a class="btn mini" id="ed-link" href="#" target="_blank" rel="noopener">Abrir o guia</a></div>
+        <div class="msg info on" id="ed-esm" hidden style="margin:0 0 14px"></div>
+        <p class="sub">É o que entra no Termo de Parceria Comercial e Permuta que o creator assina. Campo vazio sai como “a preencher” no PDF.</p>
+        <div class="pend" id="pend"></div>
+
+        <div class="duas">
+          <label class="campo"><span>Nome do creator</span><input type="text" id="c-nome"></label>
+          <label class="campo"><span>Perfil</span><input type="text" id="c-handle" placeholder="@perfil"></label>
+        </div>
+        <label class="campo"><span>Slug (URL da campanha)</span><input type="text" id="c-slug" disabled><small class="aj">Define a pasta do PDF e o valor de <code>CAMPANHA</code> na página do creator.</small></label>
+
+        <div class="secao"><h3>Período</h3>
+          <div class="tres">
+            <label class="campo"><span>Check-in</span><input type="text" id="p-checkin" placeholder="dd/mm/aaaa"></label>
+            <label class="campo"><span>Check-out</span><input type="text" id="p-checkout" placeholder="dd/mm/aaaa"></label>
+            <label class="campo"><span>Diárias</span><input type="text" id="p-diarias"></label>
+          </div></div>
+
+        <div class="secao"><h3>Hospedagem disponibilizada</h3>
+          <div class="duas">
+            <label class="campo"><span>Categoria do apartamento</span><input type="text" id="p-categoria" placeholder="ex.: Luxo vista mar"></label>
+            <label class="campo"><span>Quantidade de apartamentos</span><input type="text" id="p-apartamentos"></label>
+            <label class="campo"><span>Hóspedes</span><input type="text" id="p-hospedes" placeholder="ex.: 2 adultos e 1 criança"></label>
+            <label class="campo"><span>Regime contratado</span><input type="text" id="p-regime" placeholder="ex.: All inclusive"></label>
+          </div>
+          <label class="campo"><span>Valor comercial equivalente (R$)</span><input type="text" id="p-valor" placeholder="ex.: 3.200,00"></label></div>
+
+        <div class="secao"><h3>Benefícios inclusos</h3><div class="checks" id="p-benef"></div></div>
+
+        <div class="secao"><h3>Serviços não inclusos</h3>
+          <label class="campo"><span>Um por linha</span><textarea id="p-nao"></textarea></label></div>
+
+        <div class="secao"><h3>Hospedagens ou benefícios adicionais</h3><p class="sub" style="margin-top:-4px">Só entra no contrato se algum campo aqui for preenchido; senão a cláusula some e as seguintes renumeram.</p>
+          <div class="duas">
+            <label class="campo"><span>Categoria</span><input type="text" id="a-categoria"></label>
+            <label class="campo"><span>Quantidade</span><input type="text" id="a-quantidade"></label>
+            <label class="campo"><span>Valor comercial (R$)</span><input type="text" id="a-valor"></label>
+            <label class="campo"><span>Desconto aplicado</span><input type="text" id="a-desconto"></label>
+            <label class="campo"><span>Valor final (R$)</span><input type="text" id="a-valorFinal"></label>
+            <label class="campo"><span>Forma de pagamento</span><input type="text" id="a-pagamento"></label>
+          </div>
+          <label class="campo"><span>Prazo para pagamento</span><input type="text" id="a-prazo"></label></div>
+
+        <div class="secao"><h3>Acesso do creator (login do guia)</h3>
+          <p class="sub" style="margin-top:-4px" id="ac-estado">Sem acesso criado.</p>
+          <div class="duas">
+            <label class="campo"><span>Login</span><input type="text" id="ac-login" autocapitalize="none" placeholder="ex.: luisa"></label>
+            <label class="campo"><span>Senha</span><input type="text" id="ac-senha" autocomplete="off" placeholder="mínimo 6 caracteres"><small class="aj">Fica visível pra você copiar e mandar. Salvar uma senha nova derruba as sessões antigas.</small></label>
+          </div>
+          <div style="display:flex;gap:9px;flex-wrap:wrap">
+            <button class="btn" type="button" id="ac-gerar">Gerar senha</button>
+            <button class="btn cheio" type="button" id="ac-salvar">Salvar acesso</button>
+            <button class="btn" type="button" id="ac-copiar">⧉ Copiar login + senha + link</button>
+          </div>
+          <div class="msg" id="ac-msg"></div></div>
+
+        <div class="secao"><h3>Links que aparecem no guia</h3>
+          <label class="campo"><span>Grupo do WhatsApp da parceria (link de convite)</span><input type="text" id="l-grupo" placeholder="https://chat.whatsapp.com/…"><small class="aj">Aparece como “Grupo da parceria no WhatsApp” na aba Contato. Vazio = não aparece.</small></label>
+          <label class="campo"><span>Cardápio do Esmeralda Inclusive (URL)</span><input type="text" id="l-cardapio" placeholder="https://…pdf"><small class="aj">Link “Ver o cardápio” no bloco Chegada e estadia.</small></label></div>
+
+        <div class="secao"><h3>Quem assina pelo Esmeralda</h3>
+          <div class="duas">
+            <label class="campo"><span>Representante</span><input type="text" id="r-nome"></label>
+            <label class="campo"><span>Cargo</span><input type="text" id="r-cargo"></label>
+          </div></div>
+
+        <div class="secao"><h3>Anexo I — condições específicas</h3>
+          <label class="campo"><span>Um item por linha (vira lista numerada no contrato)</span><textarea id="p-anexo" style="min-height:220px"></textarea></label></div>
+
+        <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:8px">
+          <button class="btn cheio" type="button" id="salvar">Salvar condições</button>
+          <button class="btn" type="button" id="recarregar">Descartar mudanças</button>
+        </div>
+        <div class="msg" id="ed-msg"></div>
+      </section>
+    </div>
+
+    <div>
+      <section class="cartao">
+        <div class="cab"><h2>Documentos assinados</h2>
+          <a class="btn mini cheio" id="esm-enviar" href="#" target="_blank" rel="noopener" hidden title="Abre o EsmCreators e registra as assinaturas na ficha do creator">Enviar pro EsmCreators ↗</a>
+          <button class="btn mini" type="button" id="atualizar">Atualizar</button></div>
+        <p class="sub" id="ass-sub">Selecione uma campanha.</p>
+        <div id="lista-ass"></div>
+        <div class="msg" id="ass-msg"></div>
+      </section>
+    </div>
+  </div>
+
+  <p class="rodape">Conexão Creators · Esmeralda Praia Hotel · acesso restrito à equipe de marketing</p>
+</main>
+
+<script>
+(function(){
+"use strict";
+var $=function(s){return document.querySelector(s)};
+var $$=function(s){return [].slice.call(document.querySelectorAll(s))};
+var SUPA="https://lafiidrevxommwtvxcws.supabase.co";
+var KEY="sb_publishable_PxDEY7PXqnEQ1dMQ1dHkXA_HiNtVPRr";
+var SESS_K="eph-creators-admin";
+var ESM_URL="https://claude.ai/code/artifact/c0bbb00a-47e2-423a-ae17-3d2d33a22082";
+var B64E=function(o){ return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,""); };
+var B64D=function(s){ return JSON.parse(decodeURIComponent(escape(atob(s.replace(/-/g,"+").replace(/_/g,"/"))))); };
+var PENDENTE={nova:null,campanha:null};
+(function(){
+  var h=location.hash||"";
+  var mn=h.match(/[#&]nova=([\w\-_]+)/); if(mn){ try{ PENDENTE.nova=B64D(mn[1]); }catch(e){} }
+  var mc=h.match(/[#&]campanha=([^&]+)/); if(mc){ PENDENTE.campanha=decodeURIComponent(mc[1]); }
+  if(mn||mc){ try{ history.replaceState(null,"",location.pathname+location.search); }catch(e){} }
+})();
+var ANEXO_PADRAO=function(h,tier){ return [
+  "Entregas: conforme o formato combinado"+(tier?" ("+tier+")":"")+" e o briefing da campanha, com a data de publicação combinada por escrito com a equipe.",
+  "Marcações: @esmeraldapraiahotel no post e nos stories, Collab ativo com o perfil do hotel na hora de publicar, localização “Esmeralda Praia Hotel” e sinalização de publicidade (#publi ou ferramenta de parceria paga).",
+  "Aprovação: o conteúdo principal (vídeo e legenda) passa pela equipe do Esmeralda antes de ser publicado. Problemas durante a estadia são comunicados à equipe pelo WhatsApp, não publicados.",
+  "Preço: o(a) PARCEIRO(A) divulga apenas valores liberados por escrito pela equipe, com as condições; não divulga tarifas de terceiros, descontos não autorizados, ocupação ou informações internas.",
+  "Uso de imagem: o(a) PARCEIRO(A) autoriza o ESMERALDA, sem exclusividade e sem remuneração adicional, a reproduzir, republicar, editar (cortes, legendas e adaptação de formato) e impulsionar o conteúdo entregue, incluindo imagem, voz e nome, por 12 meses a partir da publicação, nos perfis oficiais, site, anúncios e materiais institucionais, com crédito ao perfil"+(h?" "+h:"")+" sempre que o formato permitir. Na condição de responsável legal, autoriza nos mesmos termos o uso da imagem de crianças que aparecerem no conteúdo.",
+  "Permanência: o conteúdo fica publicado por no mínimo 12 meses, sem ser arquivado ou apagado, salvo acordo com o ESMERALDA.",
+  "Gravação: valem as orientações do briefing (o que gravar, áreas que ficam fora do conteúdo, música licenciada e temas a evitar). O uso de drone é permitido, e qualquer dano ou problema decorrente é de responsabilidade de quem pilota."
+]; };
+function configDoEsm(r,base){
+  var cfg=base?JSON.parse(JSON.stringify(base)):{};
+  cfg.contratante=cfg.contratante||{razao:"SAL EMPREENDIMENTOS LTDA.",cnpj:"04.201.876/0001-57",fantasia:"Esmeralda Praia Hotel",representante:"",cargo:""};
+  cfg.checkin=r.ci||cfg.checkin||""; cfg.checkout=r.co||cfg.checkout||""; cfg.diarias=r.nt||cfg.diarias||"";
+  cfg.categoria=r.qt||cfg.categoria||""; cfg.apartamentos=cfg.apartamentos||"1"; cfg.hospedes=r.px||cfg.hospedes||"";
+  cfg.regime=r.pen||cfg.regime||""; cfg.valorComercial=r.pm||cfg.valorComercial||"";
+  if(!Array.isArray(cfg.beneficios)||!cfg.beneficios.length) cfg.beneficios=BENEF_PADRAO.map(function(b,i){ return [b, i<5]; });
+  if(!Array.isArray(cfg.naoInclusos)||!cfg.naoInclusos.length) cfg.naoInclusos=NAO_PADRAO.slice();
+  cfg.adicionais=cfg.adicionais||{categoria:"",quantidade:"",valor:"",desconto:"",valorFinal:"",pagamento:"",prazo:""};
+  if(!Array.isArray(cfg.anexo)||!cfg.anexo.length) cfg.anexo=ANEXO_PADRAO(r.h,r.tr);
+  if(cfg.cardapio==null) cfg.cardapio="https://esmeraldapraiahotel.com.br/wp-content/uploads/2026/05/Menu-All-Inclusive-2026.pdf";
+  if(cfg.grupoZap==null) cfg.grupoZap="";
+  cfg.esm={url:r.u||"",email:r.em||"",whats:r.zp||"",formato:r.tr||"",acomp:r.ac||"",obsReserva:r.ob||"",recebido:new Date().toISOString()};
+  return cfg;
+}
+function guiaDe(slug){ return location.origin+"/"+String(slug||"").split("-")[0]+"/"; }
+function tratarPendentes(){
+  var r=PENDENTE.nova; PENDENTE.nova=null;
+  if(r&&r.slug){
+    var existe=campanhas.filter(function(c){return c.slug===r.slug})[0];
+    if(!existe){
+      var cfg=configDoEsm(r,null);
+      return api("/rest/v1/creator_campaigns",{method:"POST",headers:{"Prefer":"return=minimal"},body:JSON.stringify({slug:r.slug,creator_name:r.n||r.slug,creator_handle:r.h||"",config:cfg})})
+      .then(function(resp){ if(!resp.ok) throw new Error("HTTP "+resp.status); atual=null; return carregarCampanhas(); })
+      .then(function(){ selecionar(r.slug); msg("#ed-msg","ok","Campanha criada com os dados do EsmCreators. Completa o que está marcado como pendente e salva."); })
+      .catch(function(e){ msg("#camp-msg","erro","Não deu pra criar a campanha do EsmCreators: "+e.message); });
+    }
+    selecionar(r.slug);
+    $("#esm-recebido").hidden=false;
+    $("#esm-txt").textContent="A campanha "+r.slug+" já existe. O EsmCreators mandou: "+[r.ci&&"check-in "+r.ci,r.co&&"check-out "+r.co,r.px&&"hóspedes: "+r.px,r.pen&&"regime: "+r.pen,r.qt&&"categoria: "+r.qt,r.pm&&"permuta R$ "+r.pm].filter(Boolean).join(" · ")+".";
+    PENDENTE.aplicar=r;
+    return;
+  }
+  if(PENDENTE.campanha){ var sl=PENDENTE.campanha; PENDENTE.campanha=null; if(campanhas.some(function(c){return c.slug===sl})) selecionar(sl); }
+}
+$("#esm-aplicar").addEventListener("click",function(){
+  var r=PENDENTE.aplicar; if(!r||!atual) return;
+  atual.config=configDoEsm(r,atual.config); if(r.n) atual.creator_name=r.n; if(r.h) atual.creator_handle=r.h;
+  preencherEditor(atual); sujo=true; $("#esm-recebido").hidden=true; PENDENTE.aplicar=null;
+  msg("#ed-msg","info","Condições atualizadas com a ficha do EsmCreators — confere e clica em Salvar.");
+});
+$("#esm-ignorar").addEventListener("click",function(){ $("#esm-recebido").hidden=true; PENDENTE.aplicar=null; });
+$("#ed-copiar-guia").addEventListener("click",function(){
+  if(!atual) return; var u=guiaDe(atual.slug);
+  navigator.clipboard.writeText(u).then(function(){ msg("#ed-msg","ok","Link do guia copiado: "+u); });
+});
+var sess=null, campanhas=[], atual=null, sujo=false;
+
+var BENEF_PADRAO=["hospedagem","refeições","regime especial de alimentação (all inclusive)","acesso às áreas comuns do hotel","experiências e atividades do período","benefícios promocionais","passeios","upgrades","demais itens previamente acordados"];
+var NAO_PADRAO=["consumos extras","produtos ou serviços à la carte","transporte","despesas pessoais","serviços de terceiros","demais itens não previstos na parceria"];
+
+function guardarSess(){ try{ sess?sessionStorage.setItem(SESS_K,JSON.stringify(sess)):sessionStorage.removeItem(SESS_K);}catch(e){} }
+function lerSess(){ try{ return JSON.parse(sessionStorage.getItem(SESS_K)||"null"); }catch(e){ return null; } }
+function msg(id,tipo,t){ var m=$(id); m.className="msg on "+tipo; m.textContent=t; }
+function semMsg(id){ var m=$(id); m.className="msg"; m.textContent=""; }
+function esc(t){ return String(t==null?"":t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function fmt(iso){ var d=new Date(iso); function p(n){return (n<10?"0":"")+n} return p(d.getDate())+"/"+p(d.getMonth()+1)+"/"+d.getFullYear()+" "+p(d.getHours())+":"+p(d.getMinutes()); }
+
+function api(caminho,opts){
+  opts=opts||{}; var h=opts.headers||{};
+  h["apikey"]=KEY; h["Authorization"]="Bearer "+(sess?sess.access_token:KEY);
+  if(opts.body&&!h["Content-Type"]) h["Content-Type"]="application/json";
+  return fetch(SUPA+caminho,{method:opts.method||"GET",headers:h,body:opts.body}).then(function(r){
+    if(r.status===401){ sair("Sua sessão expirou. Entra de novo."); throw new Error("sessão expirada"); }
+    return r;
+  });
+}
+
+/* ---------- login ---------- */
+function entrar(){
+  semMsg("#l-msg");
+  var email=($("#l-email").value||"").trim(), senha=$("#l-senha").value||"";
+  if(!email||!senha){ msg("#l-msg","erro","Preenche e-mail e senha."); return; }
+  $("#entrar").disabled=true;
+  fetch(SUPA+"/auth/v1/token?grant_type=password",{method:"POST",headers:{"apikey":KEY,"Content-Type":"application/json"},body:JSON.stringify({email:email,password:senha})})
+  .then(function(r){ return r.json().then(function(j){ if(!r.ok) throw new Error(j.error_description||j.msg||j.message||"Login recusado"); return j; }); })
+  .then(function(j){ sess={access_token:j.access_token,refresh_token:j.refresh_token,email:j.user&&j.user.email,exp:j.expires_at}; guardarSess(); return checarAdmin(); })
+  .catch(function(e){ msg("#l-msg","erro",/invalid/i.test(e.message)?"E-mail ou senha incorretos.":e.message); sess=null; guardarSess(); })
+  .then(function(){ $("#entrar").disabled=false; });
+}
+function checarAdmin(){
+  return api("/rest/v1/rpc/is_creator_admin",{method:"POST",body:"{}"}).then(function(r){ return r.json(); }).then(function(ok){
+    if(ok!==true){ sess=null; guardarSess(); msg("#l-msg","erro","Esse login existe, mas não está na lista de acesso do Conexão Creators."); return; }
+    $("#login").hidden=true; $("#app").hidden=false; $("#quem").hidden=false; $("#quem-email").textContent=sess.email||"";
+    return carregarCampanhas().then(tratarPendentes);
+  });
+}
+function sair(texto){
+  sess=null; guardarSess(); atual=null; campanhas=[];
+  $("#app").hidden=true; $("#quem").hidden=true; $("#login").hidden=false; $("#editor").hidden=true;
+  $("#l-senha").value=""; if(texto) msg("#l-msg","info",texto); else semMsg("#l-msg");
+}
+$("#entrar").addEventListener("click",entrar);
+$("#l-senha").addEventListener("keydown",function(e){ if(e.key==="Enter") entrar(); });
+$("#sair").addEventListener("click",function(){ sair(); });
+
+/* ---------- campanhas ---------- */
+function carregarCampanhas(){
+  semMsg("#camp-msg");
+  return api("/rest/v1/creator_campaigns?select=slug,creator_name,creator_handle,active,config,updated_at&order=updated_at.desc").then(function(r){ return r.json(); })
+  .then(function(lista){
+    if(!Array.isArray(lista)) throw new Error("não deu pra listar");
+    campanhas=lista;
+    return api("/rest/v1/creator_term_signatures?select=campaign_slug&limit=500").then(function(r){ return r.json(); }).then(function(ass){
+      var cont={}; (Array.isArray(ass)?ass:[]).forEach(function(a){ cont[a.campaign_slug]=(cont[a.campaign_slug]||0)+1; });
+      var ul=$("#lista-camp");
+      if(!lista.length){ ul.innerHTML='<li class="vazio" style="cursor:default">Nenhuma campanha ainda.</li>'; return; }
+      ul.innerHTML=lista.map(function(c){
+        return '<li data-slug="'+esc(c.slug)+'"'+(atual&&atual.slug===c.slug?' class="on"':'')+'><div><b>'+esc(c.creator_name)+'</b><span>'+esc(c.creator_handle||"")+' · '+esc(c.config&&c.config.checkin||"sem data")+(c.active?"":" · inativa")+'</span></div><span class="n">'+(cont[c.slug]||0)+' assin.</span></li>';
+      }).join("");
+      if(!atual && lista.length) selecionar(lista[0].slug);
+    });
+  }).catch(function(e){ msg("#camp-msg","erro","Não deu pra carregar as campanhas: "+e.message); });
+}
+$("#lista-camp").addEventListener("click",function(e){
+  var li=e.target.closest("li[data-slug]"); if(!li) return;
+  if(sujo && !confirm("Tem mudanças não salvas nas condições. Descartar?")) return;
+  selecionar(li.getAttribute("data-slug"));
+});
+function selecionar(slug){
+  atual=campanhas.filter(function(c){return c.slug===slug})[0]; if(!atual) return;
+  $$("#lista-camp li").forEach(function(li){ li.classList.toggle("on", li.getAttribute("data-slug")===slug); });
+  preencherEditor(atual); $("#editor").hidden=false; sujo=false;
+  carregarAssinaturas();
+}
+$("#nova-camp").addEventListener("click",function(){
+  var nome=prompt("Nome do creator:"); if(!nome) return;
+  var handle=prompt("Perfil (com @):","@")||"";
+  var slug=(nome.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,""))+"-"+new Date().toISOString().slice(0,7);
+  var base=campanhas[0]&&campanhas[0].config?JSON.parse(JSON.stringify(campanhas[0].config)):{};
+  var cfg={
+    contratante:{razao:"SAL EMPREENDIMENTOS LTDA.",cnpj:"04.201.876/0001-57",fantasia:"Esmeralda Praia Hotel",representante:(base.contratante&&base.contratante.representante)||"",cargo:(base.contratante&&base.contratante.cargo)||""},
+    checkin:"",checkout:"",diarias:"",categoria:"",apartamentos:"1",hospedes:"",regime:"",valorComercial:"",
+    beneficios:BENEF_PADRAO.map(function(b){return [b,false]}), naoInclusos:NAO_PADRAO.slice(),
+    adicionais:{categoria:"",quantidade:"",valor:"",desconto:"",valorFinal:"",pagamento:"",prazo:""}, anexo:[] };
+  api("/rest/v1/creator_campaigns",{method:"POST",headers:{"Prefer":"return=minimal"},body:JSON.stringify({slug:slug,creator_name:nome,creator_handle:handle,config:cfg})})
+  .then(function(r){ if(!r.ok) throw new Error("HTTP "+r.status); atual=null; return carregarCampanhas().then(function(){ selecionar(slug); }); })
+  .catch(function(e){ msg("#camp-msg","erro","Não deu pra criar: "+e.message); });
+});
+
+/* ---------- editor ---------- */
+var CAMPOS={"#p-checkin":"checkin","#p-checkout":"checkout","#p-diarias":"diarias","#p-categoria":"categoria","#p-apartamentos":"apartamentos","#p-hospedes":"hospedes","#p-regime":"regime","#p-valor":"valorComercial"};
+var ADIC={"#a-categoria":"categoria","#a-quantidade":"quantidade","#a-valor":"valor","#a-desconto":"desconto","#a-valorFinal":"valorFinal","#a-pagamento":"pagamento","#a-prazo":"prazo"};
+function preencherEditor(c){
+  var cfg=c.config||{}, ad=cfg.adicionais||{}, ct=cfg.contratante||{};
+  $("#ed-titulo").textContent="Condições · "+c.creator_name;
+  $("#ed-link").href=guiaDe(c.slug);
+  var e=cfg.esm; var box=$("#ed-esm");
+  if(e&&(e.email||e.whats||e.url||e.formato||e.acomp||e.obsReserva)){
+    box.hidden=false; box.innerHTML="<b>Da ficha do EsmCreators:</b> "+[e.url&&'<a href="'+esc(e.url)+'" target="_blank" rel="noopener">Instagram ↗</a>',e.email&&"e-mail "+esc(e.email),e.whats&&"WhatsApp "+esc(e.whats),e.formato&&"formato: "+esc(e.formato),e.acomp&&"acompanhantes: "+esc(e.acomp).replace(/\n/g,", "),e.obsReserva&&"obs. reserva: "+esc(e.obsReserva)].filter(Boolean).join(" · ");
+  } else { box.hidden=true; box.innerHTML=""; }
+  $("#c-nome").value=c.creator_name||""; $("#c-handle").value=c.creator_handle||""; $("#c-slug").value=c.slug;
+  Object.keys(CAMPOS).forEach(function(id){ $(id).value=cfg[CAMPOS[id]]||""; });
+  Object.keys(ADIC).forEach(function(id){ $(id).value=ad[ADIC[id]]||""; });
+  $("#r-nome").value=ct.representante||""; $("#r-cargo").value=ct.cargo||"";
+  $("#l-grupo").value=cfg.grupoZap||""; $("#l-cardapio").value=cfg.cardapio||"";
+  var benef=Array.isArray(cfg.beneficios)&&cfg.beneficios.length?cfg.beneficios:BENEF_PADRAO.map(function(b){return [b,false]});
+  $("#p-benef").innerHTML=benef.map(function(b,i){ return '<label><input type="checkbox" data-i="'+i+'"'+(b[1]?" checked":"")+'>'+esc(b[0])+'</label>'; }).join("");
+  $("#p-benef").setAttribute("data-nomes",JSON.stringify(benef.map(function(b){return b[0]})));
+  $("#p-nao").value=(cfg.naoInclusos||NAO_PADRAO).join("\n");
+  $("#p-anexo").value=(cfg.anexo||[]).join("\n");
+  pendencias(); semMsg("#ed-msg");
+  carregarAcesso(c.slug, c.creator_handle);
+}
+/* ---------- acesso do creator ---------- */
+function carregarAcesso(slug, handle){
+  $("#ac-login").value=""; $("#ac-senha").value=""; semMsg("#ac-msg");
+  $("#ac-estado").textContent="Consultando…";
+  api("/rest/v1/rpc/creator_login_info",{method:"POST",body:JSON.stringify({p_slug:slug})}).then(function(r){ return r.json(); }).then(function(i){
+    if(i&&i.login){
+      $("#ac-login").value=i.login;
+      $("#ac-estado").textContent="Acesso ativo: login "+i.login+", criado em "+fmt(i.created_at)+(i.last_login_at?", último acesso "+fmt(i.last_login_at):", ainda não entrou")+".";
+    } else {
+      $("#ac-login").value=(handle||"").replace(/^@/,"").toLowerCase().replace(/[^a-z0-9._-]/g,"").slice(0,40)||slug.split("-")[0];
+      $("#ac-estado").textContent="Sem acesso criado. Define um login e uma senha e salva.";
+    }
+  }).catch(function(){ $("#ac-estado").textContent="Não deu pra consultar o acesso."; });
+}
+$("#ac-gerar").addEventListener("click",function(){
+  var pal=["praia","mar","sol","onda","areia","morro","brisa","concha"], n=Math.floor(100+Math.random()*900);
+  var p=pal[Math.floor(Math.random()*pal.length)]; $("#ac-senha").value="esmeralda-"+p+"-"+n;
+});
+$("#ac-salvar").addEventListener("click",function(){
+  if(!atual) return; semMsg("#ac-msg");
+  var login=$("#ac-login").value.trim().toLowerCase(), senha=$("#ac-senha").value;
+  if(!/^[a-z0-9._-]{3,40}$/.test(login)){ msg("#ac-msg","erro","Login: 3 a 40 caracteres, só letras minúsculas, números, ponto, traço."); return; }
+  if(senha.length<6){ msg("#ac-msg","erro","Senha com pelo menos 6 caracteres."); return; }
+  $("#ac-salvar").disabled=true;
+  api("/rest/v1/rpc/creator_set_login",{method:"POST",body:JSON.stringify({p_slug:atual.slug,p_login:login,p_senha:senha})})
+  .then(function(r){ return r.json().then(function(j){ if(!r.ok) throw new Error(j.message||("HTTP "+r.status)); return j; }); })
+  .then(function(){ msg("#ac-msg","ok","Acesso salvo. Manda login e senha pro creator (botão copiar)."); carregarAcesso(atual.slug, atual.creator_handle); $("#ac-senha").value=senha; })
+  .catch(function(e){ msg("#ac-msg","erro","Não salvou: "+e.message); })
+  .then(function(){ $("#ac-salvar").disabled=false; });
+});
+$("#ac-copiar").addEventListener("click",function(){
+  if(!atual) return; var t="Conexão Creators · Esmeralda Praia Hotel\nLink: "+guiaDe(atual.slug)+"\nLogin: "+$("#ac-login").value.trim()+"\nSenha: "+($("#ac-senha").value||"(a que você definiu)");
+  navigator.clipboard.writeText(t).then(function(){ msg("#ac-msg","ok","Copiado. Cola no WhatsApp do creator."); });
+});
+function lerEditor(){
+  var cfg=JSON.parse(JSON.stringify(atual.config||{}));
+  cfg.contratante=cfg.contratante||{razao:"SAL EMPREENDIMENTOS LTDA.",cnpj:"04.201.876/0001-57",fantasia:"Esmeralda Praia Hotel"};
+  Object.keys(CAMPOS).forEach(function(id){ cfg[CAMPOS[id]]=$(id).value.trim(); });
+  cfg.adicionais={}; Object.keys(ADIC).forEach(function(id){ cfg.adicionais[ADIC[id]]=$(id).value.trim(); });
+  cfg.contratante.representante=$("#r-nome").value.trim(); cfg.contratante.cargo=$("#r-cargo").value.trim();
+  cfg.grupoZap=$("#l-grupo").value.trim(); cfg.cardapio=$("#l-cardapio").value.trim();
+  var nomes=JSON.parse($("#p-benef").getAttribute("data-nomes")||"[]");
+  cfg.beneficios=nomes.map(function(n,i){ var cb=$('#p-benef input[data-i="'+i+'"]'); return [n, !!(cb&&cb.checked)]; });
+  cfg.naoInclusos=$("#p-nao").value.split("\n").map(function(l){return l.trim()}).filter(Boolean);
+  cfg.anexo=$("#p-anexo").value.split("\n").map(function(l){return l.trim()}).filter(Boolean);
+  return cfg;
+}
+function pendencias(){
+  var itens=[["#p-checkin","Check-in"],["#p-checkout","Check-out"],["#p-diarias","Diárias"],["#p-categoria","Categoria"],["#p-hospedes","Hóspedes"],["#p-regime","Regime"],["#p-valor","Valor comercial"],["#r-nome","Representante"],["#r-cargo","Cargo"]];
+  var faltam=itens.filter(function(i){ var el=$(i[0]); var v=!el.value.trim(); el.classList.toggle("falta",v); return v; });
+  $("#pend").innerHTML = faltam.length ? faltam.map(function(i){return "<span>Falta: "+esc(i[1])+"</span>"}).join("") : '<span class="ok">Contrato completo — nada pendente</span>';
+}
+$("#editor").addEventListener("input",function(){ sujo=true; pendencias(); });
+$("#editor").addEventListener("change",function(){ sujo=true; });
+$("#recarregar").addEventListener("click",function(){ if(atual) preencherEditor(atual); sujo=false; });
+$("#salvar").addEventListener("click",function(){
+  if(!atual) return; semMsg("#ed-msg");
+  var cfg=lerEditor(), nome=$("#c-nome").value.trim(), handle=$("#c-handle").value.trim();
+  if(!nome){ msg("#ed-msg","erro","O nome do creator não pode ficar vazio."); return; }
+  $("#salvar").disabled=true;
+  api("/rest/v1/creator_campaigns?slug=eq."+encodeURIComponent(atual.slug),{method:"PATCH",headers:{"Prefer":"return=representation"},body:JSON.stringify({creator_name:nome,creator_handle:handle,config:cfg})})
+  .then(function(r){ return r.json().then(function(j){ if(!r.ok) throw new Error(j.message||("HTTP "+r.status)); return j; }); })
+  .then(function(rows){
+    var c=rows&&rows[0]; if(c){ atual=c; campanhas=campanhas.map(function(x){return x.slug===c.slug?c:x}); }
+    sujo=false; msg("#ed-msg","ok","Salvo. O guia do creator já mostra essas condições; quem assinar a partir de agora recebe o contrato completo.");
+    return carregarCampanhas();
+  }).catch(function(e){ msg("#ed-msg","erro","Não salvou: "+e.message); })
+  .then(function(){ $("#salvar").disabled=false; });
+});
+
+/* ---------- assinaturas ---------- */
+function carregarAssinaturas(){
+  if(!atual) return; semMsg("#ass-msg");
+  $("#ass-sub").textContent="Campanha: "+atual.creator_name+" · "+atual.slug;
+  $("#esm-enviar").hidden=true;
+  $("#lista-ass").innerHTML='<div class="vazio">Carregando…</div>';
+  api("/rest/v1/creator_term_signatures?campaign_slug=eq."+encodeURIComponent(atual.slug)+"&select=id,created_at,signer_role,signer_name,signer_cpf,signer_email,term_version,term_hash,signature_png,extra&order=created_at.desc")
+  .then(function(r){ return r.json(); }).then(function(lista){
+    if(!Array.isArray(lista)) throw new Error("resposta inesperada");
+    var env=$("#esm-enviar");
+    if(!lista.length){ $("#lista-ass").innerHTML='<div class="vazio">Ninguém assinou ainda nesta campanha.</div>'; env.hidden=true; return; }
+    env.hidden=false;
+    env.href=ESM_URL+"#termo="+B64E({slug:atual.slug,n:atual.creator_name,h:atual.creator_handle,guia:guiaDe(atual.slug),
+      ass:lista.map(function(a){ return {nome:a.signer_name,papel:a.signer_role,quando:fmt(a.created_at),prot:a.id.slice(0,8).toUpperCase(),pdf:(a.extra||{}).pdf_path||""}; })});
+    $("#lista-ass").innerHTML=lista.map(function(a){
+      var ex=a.extra||{}, prot=a.id.slice(0,8).toUpperCase(), pdf=ex.pdf_path;
+      return '<div class="assin" data-id="'+esc(a.id)+'" data-pdf="'+esc(pdf||"")+'">'+
+        '<div><span class="nome">'+esc(a.signer_name)+'</span><span class="papel">'+(a.signer_role==="collab"?"collab":a.signer_role==="responsavel"?"responsável":"creator")+'</span>'+
+        '<dl><dt>Perfil</dt><dd>'+esc(ex.perfil||"—")+'</dd><dt>Documento</dt><dd>'+esc(ex.documento||a.signer_cpf||"—")+'</dd><dt>E-mail</dt><dd>'+esc(a.signer_email||"—")+'</dd><dt>Telefone</dt><dd>'+esc(ex.telefone||"—")+'</dd><dt>Assinado em</dt><dd>'+fmt(a.created_at)+'</dd><dt>Protocolo</dt><dd>'+prot+' · termo v'+esc(a.term_version)+'</dd><dt>Origem</dt><dd>'+esc(ex.origem||"—")+'</dd></dl></div>'+
+        '<div class="img"><img src="'+esc(a.signature_png)+'" alt="Assinatura"></div>'+
+        '<div class="acoes">'+(pdf?'<button class="btn mini cheio" type="button" data-baixar>Baixar PDF assinado</button>':'<span class="btn mini" style="opacity:.6">Sem PDF no servidor</span>')+
+        '<button class="btn mini perigo" type="button" data-apagar>Apagar (teste)</button></div></div>';
+    }).join("");
+  }).catch(function(e){ $("#lista-ass").innerHTML=""; msg("#ass-msg","erro","Não deu pra listar as assinaturas: "+e.message); });
+}
+$("#atualizar").addEventListener("click",carregarAssinaturas);
+$("#lista-ass").addEventListener("click",function(e){
+  var card=e.target.closest(".assin"); if(!card) return;
+  var id=card.getAttribute("data-id"), pdf=card.getAttribute("data-pdf");
+  if(e.target.closest("[data-baixar]")){
+    var b=e.target.closest("[data-baixar]"); b.disabled=true; b.textContent="Baixando…";
+    api("/storage/v1/object/authenticated/creator-contracts/"+pdf.split("/").map(encodeURIComponent).join("/")).then(function(r){ if(!r.ok) throw new Error("HTTP "+r.status); return r.blob(); })
+    .then(function(blob){ var u=URL.createObjectURL(blob), a=document.createElement("a"); a.href=u; a.download=pdf.split("/").pop(); document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){URL.revokeObjectURL(u)},4000); })
+    .catch(function(err){ msg("#ass-msg","erro","Não deu pra baixar o PDF: "+err.message); })
+    .then(function(){ b.disabled=false; b.textContent="Baixar PDF assinado"; });
+  }
+  if(e.target.closest("[data-apagar]")){
+    if(!confirm("Apagar esta assinatura e o PDF dela? Use só pra registros de teste.")) return;
+    var passos=[api("/rest/v1/creator_term_signatures?id=eq."+encodeURIComponent(id),{method:"DELETE",headers:{"Prefer":"return=minimal"}})];
+    if(pdf) passos.push(api("/storage/v1/object/creator-contracts",{method:"DELETE",body:JSON.stringify({prefixes:[pdf]})}));
+    Promise.all(passos).then(function(rs){ if(!rs[0].ok) throw new Error("HTTP "+rs[0].status); carregarAssinaturas(); carregarCampanhas(); })
+    .catch(function(err){ msg("#ass-msg","erro","Não deu pra apagar: "+err.message); });
+  }
+});
+
+/* ---------- boot ---------- */
+sess=lerSess();
+if(sess&&sess.access_token){ checarAdmin().catch(function(){ sair(); }); }
+})();
+</script>
+</body>
+</html>
