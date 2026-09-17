@@ -276,7 +276,7 @@ var $$=function(s){return [].slice.call(document.querySelectorAll(s))};
 var SUPA="https://lafiidrevxommwtvxcws.supabase.co";
 var KEY="sb_publishable_PxDEY7PXqnEQ1dMQ1dHkXA_HiNtVPRr";
 var SESS_K="eph-creators-admin";
-var ESM_URL="https://claude.ai/code/artifact/c0bbb00a-47e2-423a-ae17-3d2d33a22082";
+var ESM_URL=location.origin+"/esmcreators/";   /* EsmCreators hospedado no site (mesmo login) */
 var B64E=function(o){ return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,""); };
 var B64D=function(s){ return JSON.parse(decodeURIComponent(escape(atob(s.replace(/-/g,"+").replace(/_/g,"/"))))); };
 var PENDENTE={nova:null,campanha:null};
@@ -354,8 +354,17 @@ var sess=null, campanhas=[], atual=null, sujo=false;
 var BENEF_PADRAO=["hospedagem","refeições","regime especial de alimentação (all inclusive)","acesso às áreas comuns do hotel","experiências e atividades do período","benefícios promocionais","passeios","upgrades","demais itens previamente acordados"];
 var NAO_PADRAO=["consumos extras","produtos ou serviços à la carte","transporte","despesas pessoais","serviços de terceiros","demais itens não previstos na parceria"];
 
-function guardarSess(){ try{ sess?sessionStorage.setItem(SESS_K,JSON.stringify(sess)):sessionStorage.removeItem(SESS_K);}catch(e){} }
-function lerSess(){ try{ return JSON.parse(sessionStorage.getItem(SESS_K)||"null"); }catch(e){ return null; } }
+function guardarSess(){ try{ sess?localStorage.setItem(SESS_K,JSON.stringify(sess)):localStorage.removeItem(SESS_K); sessionStorage.removeItem(SESS_K);}catch(e){} }
+function lerSess(){ try{ return JSON.parse(localStorage.getItem(SESS_K)||sessionStorage.getItem(SESS_K)||"null"); }catch(e){ return null; } }
+var renovando=null;
+function renovarSessao(){
+  if(!sess||!sess.refresh_token) return Promise.reject(new Error("sem refresh"));
+  if(renovando) return renovando;
+  renovando=fetch(SUPA+"/auth/v1/token?grant_type=refresh_token",{method:"POST",headers:{"apikey":KEY,"Content-Type":"application/json"},body:JSON.stringify({refresh_token:sess.refresh_token})})
+    .then(function(r){ return r.json().then(function(j){ if(!r.ok||!j.access_token) throw new Error("refresh falhou"); sess={access_token:j.access_token,refresh_token:j.refresh_token||sess.refresh_token,email:(j.user&&j.user.email)||sess.email,exp:j.expires_at}; guardarSess(); }); })
+    .then(function(){ renovando=null; },function(e){ renovando=null; throw e; });
+  return renovando;
+}
 function msg(id,tipo,t){ var m=$(id); m.className="msg on "+tipo; m.textContent=t; }
 function semMsg(id){ var m=$(id); m.className="msg"; m.textContent=""; }
 function esc(t){ return String(t==null?"":t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
@@ -366,8 +375,8 @@ function api(caminho,opts){
   h["apikey"]=KEY; h["Authorization"]="Bearer "+(sess?sess.access_token:KEY);
   if(opts.body&&!h["Content-Type"]) h["Content-Type"]="application/json";
   return fetch(SUPA+caminho,{method:opts.method||"GET",headers:h,body:opts.body}).then(function(r){
-    if(r.status===401){ sair("Sua sessão expirou. Entra de novo."); throw new Error("sessão expirada"); }
-    return r;
+    if(r.status!==401||opts._retry||!sess) return r;
+    return renovarSessao().then(function(){ return api(caminho,Object.assign({},opts,{_retry:true})); },function(){ sair("Sua sessão expirou. Entra de novo."); throw new Error("sessão expirada"); });
   });
 }
 
